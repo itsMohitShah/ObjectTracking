@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -49,16 +50,73 @@ void *xrealloc_location(void *ptr, const size_t size, const char * const filenam
     }
     return ptr;
 }
+=======
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <assert.h>
+#include <unistd.h>
+#include <float.h>
+#include <limits.h>
+#include <time.h>
+#include <sys/time.h>
+
+#include "utils.h"
+
+
+/*
+// old timing. is it better? who knows!!
+double get_wall_time()
+{
+    struct timeval time;
+    if (gettimeofday(&time,NULL)){
+        return 0;
+    }
+    return (double)time.tv_sec + (double)time.tv_usec * .000001;
+}
+*/
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 double what_time_is_it_now()
 {
     struct timeval time;
+<<<<<<< HEAD
     if (gettimeofday(&time, NULL)) {
+=======
+    if (gettimeofday(&time,NULL)){
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         return 0;
     }
     return (double)time.tv_sec + (double)time.tv_usec * .000001;
 }
 
+<<<<<<< HEAD
+=======
+int *read_intlist(char *gpu_list, int *ngpus, int d)
+{
+    int *gpus = 0;
+    if(gpu_list){
+        int len = strlen(gpu_list);
+        *ngpus = 1;
+        int i;
+        for(i = 0; i < len; ++i){
+            if (gpu_list[i] == ',') ++*ngpus;
+        }
+        gpus = calloc(*ngpus, sizeof(int));
+        for(i = 0; i < *ngpus; ++i){
+            gpus[i] = atoi(gpu_list);
+            gpu_list = strchr(gpu_list, ',')+1;
+        }
+    } else {
+        gpus = calloc(1, sizeof(float));
+        *gpus = d;
+        *ngpus = 1;
+    }
+    return gpus;
+}
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 int *read_map(char *filename)
 {
     int n = 0;
@@ -68,11 +126,17 @@ int *read_map(char *filename)
     if(!file) file_error(filename);
     while((str=fgetl(file))){
         ++n;
+<<<<<<< HEAD
         map = (int*)xrealloc(map, n * sizeof(int));
         map[n-1] = atoi(str);
         free(str);
     }
     if (file) fclose(file);
+=======
+        map = realloc(map, n*sizeof(int));
+        map[n-1] = atoi(str);
+    }
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     return map;
 }
 
@@ -83,13 +147,18 @@ void sorta_shuffle(void *arr, size_t n, size_t size, size_t sections)
         size_t start = n*i/sections;
         size_t end = n*(i+1)/sections;
         size_t num = end-start;
+<<<<<<< HEAD
         shuffle((char*)arr+(start*size), num, size);
+=======
+        shuffle(arr+(start*size), num, size);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     }
 }
 
 void shuffle(void *arr, size_t n, size_t size)
 {
     size_t i;
+<<<<<<< HEAD
     void* swp = (void*)xcalloc(1, size);
     for(i = 0; i < n-1; ++i){
         size_t j = i + random_gen()/(RAND_MAX / (n-i)+1);
@@ -98,6 +167,31 @@ void shuffle(void *arr, size_t n, size_t size)
         memcpy((char*)arr+(i*size), swp,          size);
     }
     free(swp);
+=======
+    void *swp = calloc(1, size);
+    for(i = 0; i < n-1; ++i){
+        size_t j = i + rand()/(RAND_MAX / (n-i)+1);
+        memcpy(swp,          arr+(j*size), size);
+        memcpy(arr+(j*size), arr+(i*size), size);
+        memcpy(arr+(i*size), swp,          size);
+    }
+}
+
+int *random_index_order(int min, int max)
+{
+    int *inds = calloc(max-min, sizeof(int));
+    int i;
+    for(i = min; i < max; ++i){
+        inds[i] = i;
+    }
+    for(i = min; i < max-1; ++i){
+        int swap = inds[i];
+        int index = i + rand()%(max-i);
+        inds[i] = inds[index];
+        inds[index] = swap;
+    }
+    return inds;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 void del_arg(int argc, char **argv, int index)
@@ -174,7 +268,10 @@ char *basecfg(char *cfgfile)
     {
         c = next+1;
     }
+<<<<<<< HEAD
     if(!next) while ((next = strchr(c, '\\'))) { c = next + 1; }
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     c = copy_string(c);
     next = strchr(c, '.');
     if (next) *next = 0;
@@ -204,6 +301,7 @@ void pm(int M, int N, float *A)
     printf("\n");
 }
 
+<<<<<<< HEAD
 void find_replace(const char* str, char* orig, char* rep, char* output)
 {
     char* buffer = (char*)calloc(8192, sizeof(char));
@@ -213,11 +311,22 @@ void find_replace(const char* str, char* orig, char* rep, char* output)
     if (!(p = strstr(buffer, orig))) {  // Is 'orig' even in 'str'?
         sprintf(output, "%s", buffer);
         free(buffer);
+=======
+void find_replace(char *str, char *orig, char *rep, char *output)
+{
+    char buffer[4096] = {0};
+    char *p;
+
+    sprintf(buffer, "%s", str);
+    if(!(p = strstr(buffer, orig))){  // Is 'orig' even in 'str'?
+        sprintf(output, "%s", str);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         return;
     }
 
     *p = '\0';
 
+<<<<<<< HEAD
     sprintf(output, "%s%s%s", buffer, rep, p + strlen(orig));
     free(buffer);
 }
@@ -314,6 +423,9 @@ void replace_image_to_label(const char* input_path, char* output_path)
     }else{
         fprintf(stderr, "Label file name is too short: %s \n", output_path);
     }
+=======
+    sprintf(output, "%s%s%s", buffer, rep, p+strlen(orig));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 float sec(clock_t clocks)
@@ -337,6 +449,7 @@ void top_k(float *a, int n, int k, int *index)
     }
 }
 
+<<<<<<< HEAD
 
 void log_backtrace()
 {
@@ -402,6 +515,40 @@ void file_error(const char * const s)
 {
     fprintf(stderr, "Couldn't open file: %s\n", s);
     exit(EXIT_FAILURE);
+=======
+void error(const char *s)
+{
+    perror(s);
+    assert(0);
+    exit(-1);
+}
+
+unsigned char *read_file(char *filename)
+{
+    FILE *fp = fopen(filename, "rb");
+    size_t size;
+
+    fseek(fp, 0, SEEK_END); 
+    size = ftell(fp);
+    fseek(fp, 0, SEEK_SET); 
+
+    unsigned char *text = calloc(size+1, sizeof(char));
+    fread(text, 1, size, fp);
+    fclose(fp);
+    return text;
+}
+
+void malloc_error()
+{
+    fprintf(stderr, "Malloc error\n");
+    exit(-1);
+}
+
+void file_error(char *s)
+{
+    fprintf(stderr, "Couldn't open file: %s\n", s);
+    exit(0);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 list *split_str(char *s, char delim)
@@ -426,12 +573,17 @@ void strip(char *s)
     size_t offset = 0;
     for(i = 0; i < len; ++i){
         char c = s[i];
+<<<<<<< HEAD
         if(c==' '||c=='\t'||c=='\n'||c =='\r'||c==0x0d||c==0x0a) ++offset;
+=======
+        if(c==' '||c=='\t'||c=='\n') ++offset;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         else s[i-offset] = c;
     }
     s[len-offset] = '\0';
 }
 
+<<<<<<< HEAD
 
 void strip_args(char *s)
 {
@@ -446,6 +598,8 @@ void strip_args(char *s)
     s[len - offset] = '\0';
 }
 
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 void strip_char(char *s, char bad)
 {
     size_t i;
@@ -470,7 +624,11 @@ char *fgetl(FILE *fp)
 {
     if(feof(fp)) return 0;
     size_t size = 512;
+<<<<<<< HEAD
     char* line = (char*)xmalloc(size * sizeof(char));
+=======
+    char *line = malloc(size*sizeof(char));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     if(!fgets(line, size, fp)){
         free(line);
         return 0;
@@ -481,18 +639,30 @@ char *fgetl(FILE *fp)
     while((line[curr-1] != '\n') && !feof(fp)){
         if(curr == size-1){
             size *= 2;
+<<<<<<< HEAD
             line = (char*)xrealloc(line, size * sizeof(char));
+=======
+            line = realloc(line, size*sizeof(char));
+            if(!line) {
+                printf("%ld\n", size);
+                malloc_error();
+            }
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         }
         size_t readsize = size-curr;
         if(readsize > INT_MAX) readsize = INT_MAX-1;
         fgets(&line[curr], readsize, fp);
         curr = strlen(line);
     }
+<<<<<<< HEAD
     if(curr >= 2)
         if(line[curr-2] == 0x0d) line[curr-2] = 0x00;
 
     if(curr >= 1)
         if(line[curr-1] == 0x0a) line[curr-1] = 0x00;
+=======
+    if(line[curr-1] == '\n') line[curr-1] = '\0';
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
     return line;
 }
@@ -508,7 +678,11 @@ int read_int(int fd)
 void write_int(int fd, int n)
 {
     int next = write(fd, &n, sizeof(int));
+<<<<<<< HEAD
     if(next <= 0) error("read failed", DARKNET_LOC);
+=======
+    if(next <= 0) error("read failed");
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 int read_all_fail(int fd, char *buffer, size_t bytes)
@@ -538,7 +712,11 @@ void read_all(int fd, char *buffer, size_t bytes)
     size_t n = 0;
     while(n < bytes){
         int next = read(fd, buffer + n, bytes-n);
+<<<<<<< HEAD
         if(next <= 0) error("read failed", DARKNET_LOC);
+=======
+        if(next <= 0) error("read failed");
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         n += next;
     }
 }
@@ -548,7 +726,11 @@ void write_all(int fd, char *buffer, size_t bytes)
     size_t n = 0;
     while(n < bytes){
         size_t next = write(fd, buffer + n, bytes-n);
+<<<<<<< HEAD
         if(next <= 0) error("write failed", DARKNET_LOC);
+=======
+        if(next <= 0) error("write failed");
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         n += next;
     }
 }
@@ -556,10 +738,14 @@ void write_all(int fd, char *buffer, size_t bytes)
 
 char *copy_string(char *s)
 {
+<<<<<<< HEAD
     if(!s) {
         return NULL;
     }
     char* copy = (char*)xmalloc(strlen(s) + 1);
+=======
+    char *copy = malloc(strlen(s)+1);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     strncpy(copy, s, strlen(s)+1);
     return copy;
 }
@@ -595,7 +781,11 @@ int count_fields(char *line)
 
 float *parse_fields(char *line, int n)
 {
+<<<<<<< HEAD
     float* field = (float*)xcalloc(n, sizeof(float));
+=======
+    float *field = calloc(n, sizeof(float));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     char *c, *p, *end;
     int count = 0;
     int done = 0;
@@ -696,8 +886,13 @@ void normalize_array(float *a, int n)
     for(i = 0; i < n; ++i){
         a[i] = (a[i] - mu)/sigma;
     }
+<<<<<<< HEAD
     //mu = mean_array(a,n);
     //sigma = sqrt(variance_array(a,n));
+=======
+    mu = mean_array(a,n);
+    sigma = sqrt(variance_array(a,n));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 void translate_array(float *a, int n, float s)
@@ -713,6 +908,7 @@ float mag_array(float *a, int n)
     int i;
     float sum = 0;
     for(i = 0; i < n; ++i){
+<<<<<<< HEAD
         sum += a[i]*a[i];
     }
     return sqrt(sum);
@@ -727,6 +923,9 @@ float mag_array_skip(float *a, int n, int * indices_to_skip)
         if (indices_to_skip[i] != 1) {
             sum += a[i] * a[i];
         }
+=======
+        sum += a[i]*a[i];   
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     }
     return sqrt(sum);
 }
@@ -742,6 +941,7 @@ void scale_array(float *a, int n, float s)
 int sample_array(float *a, int n)
 {
     float sum = sum_array(a, n);
+<<<<<<< HEAD
     scale_array(a, n, 1. / sum);
     float r = rand_uniform(0, 1);
     int i;
@@ -764,6 +964,30 @@ int sample_array_custom(float *a, int n)
         if (r <= 0) return i;
     }
     return n-1;
+=======
+    scale_array(a, n, 1./sum);
+    float r = rand_uniform(0, 1);
+    int i;
+    for(i = 0; i < n; ++i){
+        r = r - a[i];
+        if (r <= 0) return i;
+    }
+    return n-1;
+}
+
+int max_int_index(int *a, int n)
+{
+    if(n <= 0) return -1;
+    int i, max_i = 0;
+    int max = a[0];
+    for(i = 1; i < n; ++i){
+        if(a[i] > max){
+            max = a[i];
+            max_i = i;
+        }
+    }
+    return max_i;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 int max_index(float *a, int n)
@@ -780,6 +1004,7 @@ int max_index(float *a, int n)
     return max_i;
 }
 
+<<<<<<< HEAD
 int top_max_index(float *a, int n, int k)
 {
     if (n <= 0) return -1;
@@ -810,6 +1035,13 @@ int int_index(int *a, int val, int n)
     int i;
     for (i = 0; i < n; ++i) {
         if (a[i] == val) return i;
+=======
+int int_index(int *a, int val, int n)
+{
+    int i;
+    for(i = 0; i < n; ++i){
+        if(a[i] == val) return i;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     }
     return -1;
 }
@@ -821,7 +1053,11 @@ int rand_int(int min, int max)
         min = max;
         max = s;
     }
+<<<<<<< HEAD
     int r = (random_gen()%(max - min + 1)) + min;
+=======
+    int r = (rand()%(max - min + 1)) + min;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     return r;
 }
 
@@ -839,10 +1075,17 @@ float rand_normal()
 
     haveSpare = 1;
 
+<<<<<<< HEAD
     rand1 = random_gen() / ((double) RAND_MAX);
     if(rand1 < 1e-100) rand1 = 1e-100;
     rand1 = -2 * log(rand1);
     rand2 = (random_gen() / ((double)RAND_MAX)) * 2.0 * M_PI;
+=======
+    rand1 = rand() / ((double) RAND_MAX);
+    if(rand1 < 1e-100) rand1 = 1e-100;
+    rand1 = -2 * log(rand1);
+    rand2 = (rand() / ((double) RAND_MAX)) * TWO_PI;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
     return sqrt(rand1) * cos(rand2);
 }
@@ -853,13 +1096,18 @@ float rand_normal()
    int n = 12;
    int i;
    float sum= 0;
+<<<<<<< HEAD
    for(i = 0; i < n; ++i) sum += (float)random_gen()/RAND_MAX;
+=======
+   for(i = 0; i < n; ++i) sum += (float)rand()/RAND_MAX;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
    return sum-n/2.;
    }
  */
 
 size_t rand_size_t()
 {
+<<<<<<< HEAD
     return  ((size_t)(random_gen()&0xff) << 56) |
             ((size_t)(random_gen()&0xff) << 48) |
             ((size_t)(random_gen()&0xff) << 40) |
@@ -868,6 +1116,16 @@ size_t rand_size_t()
             ((size_t)(random_gen()&0xff) << 16) |
             ((size_t)(random_gen()&0xff) << 8) |
             ((size_t)(random_gen()&0xff) << 0);
+=======
+    return  ((size_t)(rand()&0xff) << 56) | 
+        ((size_t)(rand()&0xff) << 48) |
+        ((size_t)(rand()&0xff) << 40) |
+        ((size_t)(rand()&0xff) << 32) |
+        ((size_t)(rand()&0xff) << 24) |
+        ((size_t)(rand()&0xff) << 16) |
+        ((size_t)(rand()&0xff) << 8) |
+        ((size_t)(rand()&0xff) << 0);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 float rand_uniform(float min, float max)
@@ -877,6 +1135,7 @@ float rand_uniform(float min, float max)
         min = max;
         max = swap;
     }
+<<<<<<< HEAD
 
 #if (RAND_MAX < 65536)
         int rnd = rand()*(RAND_MAX + 1) + rand();
@@ -885,27 +1144,42 @@ float rand_uniform(float min, float max)
         return ((float)rand() / RAND_MAX * (max - min)) + min;
 #endif
     //return (random_float() * (max - min)) + min;
+=======
+    return ((float)rand()/RAND_MAX * (max - min)) + min;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 float rand_scale(float s)
 {
+<<<<<<< HEAD
     float scale = rand_uniform_strong(1, s);
     if(random_gen()%2) return scale;
+=======
+    float scale = rand_uniform(1, s);
+    if(rand()%2) return scale;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     return 1./scale;
 }
 
 float **one_hot_encode(float *a, int n, int k)
 {
     int i;
+<<<<<<< HEAD
     float** t = (float**)xcalloc(n, sizeof(float*));
     for(i = 0; i < n; ++i){
         t[i] = (float*)xcalloc(k, sizeof(float));
+=======
+    float **t = calloc(n, sizeof(float*));
+    for(i = 0; i < n; ++i){
+        t[i] = calloc(k, sizeof(float));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         int index = (int)a[i];
         t[i][index] = 1;
     }
     return t;
 }
 
+<<<<<<< HEAD
 static unsigned int x = 123456789, y = 362436069, z = 521288629;
 
 // Marsaglia's xorshf96 generator: period 2^96-1
@@ -1100,3 +1374,5 @@ bool is_live_stream(const char * path){
     const char *url_schema = "://";
     return (NULL != strstr(path, url_schema));
 }
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

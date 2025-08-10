@@ -2,6 +2,7 @@
 #define MATRIX_H
 #include "darknet.h"
 
+<<<<<<< HEAD
 //typedef struct matrix{
 //    int rows, cols;
 //    float **vals;
@@ -27,11 +28,20 @@ matrix hold_out_matrix(matrix *m, int n);
 float matrix_topk_accuracy(matrix truth, matrix guess, int k);
 void matrix_add_matrix(matrix from, matrix to);
 void scale_matrix(matrix m, float scale);
+=======
+matrix copy_matrix(matrix m);
+void print_matrix(matrix m);
+
+matrix hold_out_matrix(matrix *m, int n);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 matrix resize_matrix(matrix m, int size);
 
 float *pop_column(matrix *m, int c);
 
+<<<<<<< HEAD
 #ifdef __cplusplus
 }
 #endif
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #endif

@@ -1,6 +1,9 @@
 #ifndef OPTION_LIST_H
 #define OPTION_LIST_H
+<<<<<<< HEAD
 #include "darknet.h"
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #include "list.h"
 
 typedef struct{
@@ -9,6 +12,7 @@ typedef struct{
     int used;
 } kvp;
 
+<<<<<<< HEAD
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,10 +25,17 @@ char *option_find_str(list *l, char *key, char *def);
 char *option_find_str_quiet(list *l, char *key, char *def);
 int option_find_int(list *l, char *key, int def);
 int option_find_int_quiet(list *l, char *key, int def);
+=======
+
+int read_option(char *s, list *options);
+void option_insert(list *l, char *key, char *val);
+char *option_find(list *l, char *key);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 float option_find_float(list *l, char *key, float def);
 float option_find_float_quiet(list *l, char *key, float def);
 void option_unused(list *l);
 
+<<<<<<< HEAD
 //typedef struct {
 //    int classes;
 //    char **names;
@@ -35,4 +46,6 @@ void option_unused(list *l);
 #ifdef __cplusplus
 }
 #endif
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #endif

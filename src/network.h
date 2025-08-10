@@ -1,6 +1,7 @@
 // Oh boy, why am I about to do this....
 #ifndef NETWORK_H
 #define NETWORK_H
+<<<<<<< HEAD
 
 /*
  * Necessary in C++ to get format macros out of inttypes.h
@@ -194,3 +195,31 @@ void reject_similar_weights(network net, float sim_threshold);
 #endif
 
 #endif
+=======
+#include "darknet.h"
+
+#include "image.h"
+#include "layer.h"
+#include "data.h"
+#include "tree.h"
+
+
+#ifdef GPU
+void pull_network_output(network *net);
+#endif
+
+void compare_networks(network *n1, network *n2, data d);
+char *get_layer_string(LAYER_TYPE a);
+
+network *make_network(int n);
+
+
+float network_accuracy_multi(network *net, data d, int n);
+int get_predicted_class_network(network *net);
+void print_network(network *net);
+int resize_network(network *net, int w, int h);
+void calc_network_cost(network *net);
+
+#endif
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

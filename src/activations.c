@@ -4,7 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+<<<<<<< HEAD
 #include <float.h>
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 char *get_activation_string(ACTIVATION a)
 {
@@ -19,8 +22,11 @@ char *get_activation_string(ACTIVATION a)
             return "elu";
         case SELU:
             return "selu";
+<<<<<<< HEAD
         case GELU:
             return "gelu";
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         case RELIE:
             return "relie";
         case RAMP:
@@ -48,6 +54,7 @@ char *get_activation_string(ACTIVATION a)
 ACTIVATION get_activation(char *s)
 {
     if (strcmp(s, "logistic")==0) return LOGISTIC;
+<<<<<<< HEAD
     if (strcmp(s, "swish") == 0) return SWISH;
     if (strcmp(s, "mish") == 0) return MISH;
     if (strcmp(s, "hard_mish") == 0) return HARD_MISH;
@@ -60,13 +67,22 @@ ACTIVATION get_activation(char *s)
     if (strcmp(s, "elu")==0) return ELU;
     if (strcmp(s, "selu") == 0) return SELU;
     if (strcmp(s, "gelu") == 0) return GELU;
+=======
+    if (strcmp(s, "loggy")==0) return LOGGY;
+    if (strcmp(s, "relu")==0) return RELU;
+    if (strcmp(s, "elu")==0) return ELU;
+    if (strcmp(s, "selu")==0) return SELU;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     if (strcmp(s, "relie")==0) return RELIE;
     if (strcmp(s, "plse")==0) return PLSE;
     if (strcmp(s, "hardtan")==0) return HARDTAN;
     if (strcmp(s, "lhtan")==0) return LHTAN;
     if (strcmp(s, "linear")==0) return LINEAR;
     if (strcmp(s, "ramp")==0) return RAMP;
+<<<<<<< HEAD
     if (strcmp(s, "revleaky") == 0) return REVLEAKY;
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     if (strcmp(s, "leaky")==0) return LEAKY;
     if (strcmp(s, "tanh")==0) return TANH;
     if (strcmp(s, "stair")==0) return STAIR;
@@ -89,13 +105,19 @@ float activate(float x, ACTIVATION a)
             return elu_activate(x);
         case SELU:
             return selu_activate(x);
+<<<<<<< HEAD
         case GELU:
             return gelu_activate(x);
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         case RELIE:
             return relie_activate(x);
         case RAMP:
             return ramp_activate(x);
+<<<<<<< HEAD
         case REVLEAKY:
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         case LEAKY:
             return leaky_activate(x);
         case TANH:
@@ -115,6 +137,7 @@ float activate(float x, ACTIVATION a)
 void activate_array(float *x, const int n, const ACTIVATION a)
 {
     int i;
+<<<<<<< HEAD
     if (a == LINEAR) {}
     else if (a == LEAKY) {
         #pragma omp parallel for
@@ -302,6 +325,10 @@ void gradient_array_normalize_channels(float *x, const int n, int batch, int cha
                 }
             }
         }
+=======
+    for(i = 0; i < n; ++i){
+        x[i] = activate(x[i], a);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     }
 }
 
@@ -316,6 +343,7 @@ float gradient(float x, ACTIVATION a)
             return loggy_gradient(x);
         case RELU:
             return relu_gradient(x);
+<<<<<<< HEAD
         case RELU6:
             return relu6_gradient(x);
         case NORM_CHAN:
@@ -324,17 +352,25 @@ float gradient(float x, ACTIVATION a)
             //...
         case NORM_CHAN_SOFTMAX:
             error("Error: should be used custom NORM_CHAN or NORM_CHAN_SOFTMAX-function for gradient", DARKNET_LOC);
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         case ELU:
             return elu_gradient(x);
         case SELU:
             return selu_gradient(x);
+<<<<<<< HEAD
         case GELU:
             return gelu_gradient(x);
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         case RELIE:
             return relie_gradient(x);
         case RAMP:
             return ramp_gradient(x);
+<<<<<<< HEAD
         case REVLEAKY:
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         case LEAKY:
             return leaky_gradient(x);
         case TANH:
@@ -354,6 +390,7 @@ float gradient(float x, ACTIVATION a)
 void gradient_array(const float *x, const int n, const ACTIVATION a, float *delta)
 {
     int i;
+<<<<<<< HEAD
     #pragma omp parallel for
     for(i = 0; i < n; ++i){
         delta[i] *= gradient(x[i], a);
@@ -416,3 +453,10 @@ void gradient_array_hard_mish(const int n, const float * activation_input, float
         delta[i] *= hard_mish_yashas_grad(inp);
     }
 }
+=======
+    for(i = 0; i < n; ++i){
+        delta[i] *= gradient(x[i], a);
+    }
+} 
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

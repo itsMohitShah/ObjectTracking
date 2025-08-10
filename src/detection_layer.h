@@ -6,6 +6,7 @@
 
 typedef layer detection_layer;
 
+<<<<<<< HEAD
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -23,4 +24,15 @@ void backward_detection_layer_gpu(detection_layer l, network_state state);
 #ifdef __cplusplus
 }
 #endif
+=======
+detection_layer make_detection_layer(int batch, int inputs, int n, int size, int classes, int coords, int rescore);
+void forward_detection_layer(const detection_layer l, network net);
+void backward_detection_layer(const detection_layer l, network net);
+
+#ifdef GPU
+void forward_detection_layer_gpu(const detection_layer l, network net);
+void backward_detection_layer_gpu(detection_layer l, network net);
+#endif
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #endif

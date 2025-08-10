@@ -15,7 +15,11 @@ float im2col_get_pixel(float *im, int height, int width, int channels,
 //https://github.com/BVLC/caffe/blob/master/LICENSE
 void im2col_cpu(float* data_im,
      int channels,  int height,  int width,
+<<<<<<< HEAD
      int ksize,  int stride, int pad, float* data_col)
+=======
+     int ksize,  int stride, int pad, float* data_col) 
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 {
     int c,h,w;
     int height_col = (height + 2*pad - ksize) / stride + 1;
@@ -38,6 +42,7 @@ void im2col_cpu(float* data_im,
     }
 }
 
+<<<<<<< HEAD
 
 // Function uses casting from int to unsigned to compare if value of
 // parameter a is greater or equal to zero and lower than value of
@@ -91,3 +96,5 @@ void im2col_cpu_ext(const float* data_im, const int channels,
         }
     }
 }
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

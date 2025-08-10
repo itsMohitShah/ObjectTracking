@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <cuda_runtime.h>
 #include <curand.h>
 #include <cublas_v2.h>
@@ -29,6 +30,17 @@ __device__ inline uint32_t __ballot_custom(T val) {
 }
 
 
+=======
+#include "cuda_runtime.h"
+#include "curand.h"
+#include "cublas_v2.h"
+
+extern "C" {
+#include "im2col.h"
+#include "cuda.h"
+}
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 // src: https://github.com/BVLC/caffe/blob/master/src/caffe/util/im2col.cu
 // You may also want to read: https://github.com/BVLC/caffe/blob/master/LICENSE
 
@@ -59,8 +71,12 @@ __global__ void im2col_gpu_kernel(const int n, const float* data_im,
                 *data_col_ptr = (h >= 0 && w >= 0 && h < height && w < width) ?
                     data_im_ptr[i * width + j] : 0;
 
+<<<<<<< HEAD
                 //data_im[(channel_in * height + h_in) * width + w_in + i * width + j];
                 //(*data_col_ptr) = data_im_ptr[ii * width + jj];
+=======
+                //*data_col_ptr = data_im_ptr[ii * width + jj];
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
                 data_col_ptr += height_col * width_col;
             }
@@ -68,7 +84,11 @@ __global__ void im2col_gpu_kernel(const int n, const float* data_im,
     }
 }
 
+<<<<<<< HEAD
 void im2col_ongpu(float *im,
+=======
+void im2col_gpu(float *im,
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
          int channels, int height, int width,
          int ksize, int stride, int pad, float *data_col){
     // We are going to launch channels * height_col * width_col kernels, each
@@ -77,6 +97,7 @@ void im2col_ongpu(float *im,
     int width_col = (width + 2 * pad - ksize) / stride + 1;
     int num_kernels = channels * height_col * width_col;
     im2col_gpu_kernel<<<(num_kernels+BLOCK-1)/BLOCK,
+<<<<<<< HEAD
         BLOCK, 0, get_cuda_stream()>>>(
                 num_kernels, im, height, width, ksize, pad,
                 stride, height_col,
@@ -2284,4 +2305,10 @@ void im2col_gpu_ext(const float* data_im, const int channels,
             width_col, data_col);
 
     CHECK_CUDA(cudaPeekAtLastError());
+=======
+        BLOCK>>>(
+                num_kernels, im, height, width, ksize, pad,
+                stride, height_col,
+                width_col, data_col);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }

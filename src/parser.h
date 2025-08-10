@@ -1,5 +1,6 @@
 #ifndef PARSER_H
 #define PARSER_H
+<<<<<<< HEAD
 #include "network.h"
 
 #ifdef __cplusplus
@@ -17,4 +18,12 @@ void load_weights_upto(network *net, char *filename, int cutoff);
 #ifdef __cplusplus
 }
 #endif
+=======
+#include "darknet.h"
+#include "network.h"
+
+void save_network(network net, char *filename);
+void save_weights_double(network net, char *filename);
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #endif

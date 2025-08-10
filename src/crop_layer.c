@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 #include "utils.h"
 #include "crop_layer.h"
 #include "dark_cuda.h"
+=======
+#include "crop_layer.h"
+#include "cuda.h"
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #include <stdio.h>
 
 image get_crop_image(crop_layer l)
@@ -11,13 +16,22 @@ image get_crop_image(crop_layer l)
     return float_to_image(w,h,c,l.output);
 }
 
+<<<<<<< HEAD
 void backward_crop_layer(const crop_layer l, network_state state){}
 void backward_crop_layer_gpu(const crop_layer l, network_state state){}
+=======
+void backward_crop_layer(const crop_layer l, network net){}
+void backward_crop_layer_gpu(const crop_layer l, network net){}
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 crop_layer make_crop_layer(int batch, int h, int w, int c, int crop_height, int crop_width, int flip, float angle, float saturation, float exposure)
 {
     fprintf(stderr, "Crop Layer: %d x %d -> %d x %d x %d image\n", h,w,crop_height,crop_width,c);
+<<<<<<< HEAD
     crop_layer l = { (LAYER_TYPE)0 };
+=======
+    crop_layer l = {0};
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     l.type = CROP;
     l.batch = batch;
     l.h = h;
@@ -33,7 +47,11 @@ crop_layer make_crop_layer(int batch, int h, int w, int c, int crop_height, int 
     l.out_c = c;
     l.inputs = l.w * l.h * l.c;
     l.outputs = l.out_w * l.out_h * l.out_c;
+<<<<<<< HEAD
     l.output = (float*)xcalloc(l.outputs * batch, sizeof(float));
+=======
+    l.output = calloc(l.outputs*batch, sizeof(float));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     l.forward = forward_crop_layer;
     l.backward = backward_crop_layer;
 
@@ -57,7 +75,11 @@ void resize_crop_layer(layer *l, int w, int h)
     l->inputs = l->w * l->h * l->c;
     l->outputs = l->out_h * l->out_w * l->out_c;
 
+<<<<<<< HEAD
     l->output = (float*)xrealloc(l->output, l->batch * l->outputs * sizeof(float));
+=======
+    l->output = realloc(l->output, l->batch*l->outputs*sizeof(float));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     #ifdef GPU
     cuda_free(l->output_gpu);
     l->output_gpu = cuda_make_array(l->output, l->outputs*l->batch);
@@ -65,7 +87,11 @@ void resize_crop_layer(layer *l, int w, int h)
 }
 
 
+<<<<<<< HEAD
 void forward_crop_layer(const crop_layer l, network_state state)
+=======
+void forward_crop_layer(const crop_layer l, network net)
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 {
     int i,j,c,b,row,col;
     int index;
@@ -79,7 +105,11 @@ void forward_crop_layer(const crop_layer l, network_state state)
         scale = 1;
         trans = 0;
     }
+<<<<<<< HEAD
     if(!state.train){
+=======
+    if(!net.train){
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         flip = 0;
         dh = (l.h - l.out_h)/2;
         dw = (l.w - l.out_w)/2;
@@ -89,15 +119,28 @@ void forward_crop_layer(const crop_layer l, network_state state)
             for(i = 0; i < l.out_h; ++i){
                 for(j = 0; j < l.out_w; ++j){
                     if(flip){
+<<<<<<< HEAD
                         col = l.w - dw - j - 1;
+=======
+                        col = l.w - dw - j - 1;    
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
                     }else{
                         col = j + dw;
                     }
                     row = i + dh;
+<<<<<<< HEAD
                     index = col+l.w*(row+l.h*(c + l.c*b));
                     l.output[count++] = state.input[index]*scale + trans;
+=======
+                    index = col+l.w*(row+l.h*(c + l.c*b)); 
+                    l.output[count++] = net.input[index]*scale + trans;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
                 }
             }
         }
     }
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

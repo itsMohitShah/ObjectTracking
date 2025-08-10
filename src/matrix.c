@@ -1,5 +1,9 @@
 #include "matrix.h"
 #include "utils.h"
+<<<<<<< HEAD
+=======
+#include "blas.h"
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,15 +19,24 @@ void free_matrix(matrix m)
 
 float matrix_topk_accuracy(matrix truth, matrix guess, int k)
 {
+<<<<<<< HEAD
     int* indexes = (int*)xcalloc(k, sizeof(int));
+=======
+    int *indexes = calloc(k, sizeof(int));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     int n = truth.cols;
     int i,j;
     int correct = 0;
     for(i = 0; i < truth.rows; ++i){
         top_k(guess.vals[i], n, k, indexes);
         for(j = 0; j < k; ++j){
+<<<<<<< HEAD
             int class_id = indexes[j];
             if(truth.vals[i][class_id]){
+=======
+            int class = indexes[j];
+            if(truth.vals[i][class]){
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
                 ++correct;
                 break;
             }
@@ -48,15 +61,25 @@ matrix resize_matrix(matrix m, int size)
     int i;
     if (m.rows == size) return m;
     if (m.rows < size) {
+<<<<<<< HEAD
         m.vals = (float**)xrealloc(m.vals, size * sizeof(float*));
         for (i = m.rows; i < size; ++i) {
             m.vals[i] = (float*)xcalloc(m.cols, sizeof(float));
+=======
+        m.vals = realloc(m.vals, size*sizeof(float*));
+        for (i = m.rows; i < size; ++i) {
+            m.vals[i] = calloc(m.cols, sizeof(float));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         }
     } else if (m.rows > size) {
         for (i = size; i < m.rows; ++i) {
             free(m.vals[i]);
         }
+<<<<<<< HEAD
         m.vals = (float**)xrealloc(m.vals, size * sizeof(float*));
+=======
+        m.vals = realloc(m.vals, size*sizeof(float*));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     }
     m.rows = size;
     return m;
@@ -73,15 +96,38 @@ void matrix_add_matrix(matrix from, matrix to)
     }
 }
 
+<<<<<<< HEAD
+=======
+matrix copy_matrix(matrix m)
+{
+    matrix c = {0};
+    c.rows = m.rows;
+    c.cols = m.cols;
+    c.vals = calloc(c.rows, sizeof(float *));
+    int i;
+    for(i = 0; i < c.rows; ++i){
+        c.vals[i] = calloc(c.cols, sizeof(float));
+        copy_cpu(c.cols, m.vals[i], 1, c.vals[i], 1);
+    }
+    return c;
+}
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 matrix make_matrix(int rows, int cols)
 {
     int i;
     matrix m;
     m.rows = rows;
     m.cols = cols;
+<<<<<<< HEAD
     m.vals = (float**)xcalloc(m.rows, sizeof(float*));
     for(i = 0; i < m.rows; ++i){
         m.vals[i] = (float*)xcalloc(m.cols, sizeof(float));
+=======
+    m.vals = calloc(m.rows, sizeof(float *));
+    for(i = 0; i < m.rows; ++i){
+        m.vals[i] = calloc(m.cols, sizeof(float));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     }
     return m;
 }
@@ -92,7 +138,11 @@ matrix hold_out_matrix(matrix *m, int n)
     matrix h;
     h.rows = n;
     h.cols = m->cols;
+<<<<<<< HEAD
     h.vals = (float**)xcalloc(h.rows, sizeof(float*));
+=======
+    h.vals = calloc(h.rows, sizeof(float *));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     for(i = 0; i < n; ++i){
         int index = rand()%m->rows;
         h.vals[i] = m->vals[index];
@@ -103,7 +153,11 @@ matrix hold_out_matrix(matrix *m, int n)
 
 float *pop_column(matrix *m, int c)
 {
+<<<<<<< HEAD
     float* col = (float*)xcalloc(m->rows, sizeof(float));
+=======
+    float *col = calloc(m->rows, sizeof(float));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     int i, j;
     for(i = 0; i < m->rows; ++i){
         col[i] = m->vals[i][c];
@@ -127,18 +181,30 @@ matrix csv_to_matrix(char *filename)
 
     int n = 0;
     int size = 1024;
+<<<<<<< HEAD
     m.vals = (float**)xcalloc(size, sizeof(float*));
+=======
+    m.vals = calloc(size, sizeof(float*));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     while((line = fgetl(fp))){
         if(m.cols == -1) m.cols = count_fields(line);
         if(n == size){
             size *= 2;
+<<<<<<< HEAD
             m.vals = (float**)xrealloc(m.vals, size * sizeof(float*));
+=======
+            m.vals = realloc(m.vals, size*sizeof(float*));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         }
         m.vals[n] = parse_fields(line, m.cols);
         free(line);
         ++n;
     }
+<<<<<<< HEAD
     m.vals = (float**)xrealloc(m.vals, n * sizeof(float*));
+=======
+    m.vals = realloc(m.vals, n*sizeof(float*));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     m.rows = n;
     return m;
 }
@@ -179,6 +245,7 @@ void print_matrix(matrix m)
     for(j = 0; j < 16*m.cols-1; ++j) printf(" ");
     printf("__|\n");
 }
+<<<<<<< HEAD
 
 
 matrix make_matrix(int rows, int cols);
@@ -330,3 +397,5 @@ model do_kmeans(matrix data, int k)
     m.centers = centers;
     return m;
 }
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

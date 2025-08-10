@@ -1,4 +1,5 @@
 #include "route_layer.h"
+<<<<<<< HEAD
 #include "utils.h"
 #include "dark_cuda.h"
 #include "blas.h"
@@ -8,26 +9,48 @@ route_layer make_route_layer(int batch, int n, int *input_layers, int *input_siz
 {
     fprintf(stderr,"route ");
     route_layer l = { (LAYER_TYPE)0 };
+=======
+#include "cuda.h"
+#include "blas.h"
+
+#include <stdio.h>
+
+route_layer make_route_layer(int batch, int n, int *input_layers, int *input_sizes)
+{
+    fprintf(stderr,"route ");
+    route_layer l = {0};
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     l.type = ROUTE;
     l.batch = batch;
     l.n = n;
     l.input_layers = input_layers;
     l.input_sizes = input_sizes;
+<<<<<<< HEAD
     l.groups = groups;
     l.group_id = group_id;
     l.wait_stream_id = -1;
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     int i;
     int outputs = 0;
     for(i = 0; i < n; ++i){
         fprintf(stderr," %d", input_layers[i]);
         outputs += input_sizes[i];
     }
+<<<<<<< HEAD
     outputs = outputs / groups;
     l.outputs = outputs;
     l.inputs = outputs;
     //fprintf(stderr, " inputs = %d \t outputs = %d, groups = %d, group_id = %d \n", l.inputs, l.outputs, l.groups, l.group_id);
     l.delta = (float*)xcalloc(outputs * batch, sizeof(float));
     l.output = (float*)xcalloc(outputs * batch, sizeof(float));
+=======
+    fprintf(stderr, "\n");
+    l.outputs = outputs;
+    l.inputs = outputs;
+    l.delta =  calloc(outputs*batch, sizeof(float));
+    l.output = calloc(outputs*batch, sizeof(float));;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
     l.forward = forward_route_layer;
     l.backward = backward_route_layer;
@@ -58,6 +81,7 @@ void resize_route_layer(route_layer *l, network *net)
         if(next.out_w == first.out_w && next.out_h == first.out_h){
             l->out_c += next.out_c;
         }else{
+<<<<<<< HEAD
             printf("Error: Different size of input layers: %d x %d, %d x %d\n", next.out_w, next.out_h, first.out_w, first.out_h);
             error("Error!", DARKNET_LOC);
         }
@@ -67,6 +91,15 @@ void resize_route_layer(route_layer *l, network *net)
     l->inputs = l->outputs;
     l->delta = (float*)xrealloc(l->delta, l->outputs * l->batch * sizeof(float));
     l->output = (float*)xrealloc(l->output, l->outputs * l->batch * sizeof(float));
+=======
+            printf("%d %d, %d %d\n", next.out_w, next.out_h, first.out_w, first.out_h);
+            l->out_h = l->out_w = l->out_c = 0;
+        }
+    }
+    l->inputs = l->outputs;
+    l->delta =  realloc(l->delta, l->outputs*l->batch*sizeof(float));
+    l->output = realloc(l->output, l->outputs*l->batch*sizeof(float));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 #ifdef GPU
     cuda_free(l->output_gpu);
@@ -74,15 +107,23 @@ void resize_route_layer(route_layer *l, network *net)
     l->output_gpu  = cuda_make_array(l->output, l->outputs*l->batch);
     l->delta_gpu   = cuda_make_array(l->delta,  l->outputs*l->batch);
 #endif
+<<<<<<< HEAD
 
 }
 
 void forward_route_layer(const route_layer l, network_state state)
+=======
+    
+}
+
+void forward_route_layer(const route_layer l, network net)
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 {
     int i, j;
     int offset = 0;
     for(i = 0; i < l.n; ++i){
         int index = l.input_layers[i];
+<<<<<<< HEAD
         float *input = state.net.layers[index].output;
         int input_size = l.input_sizes[i];
         int part_input_size = input_size / l.groups;
@@ -96,11 +137,24 @@ void forward_route_layer(const route_layer l, network_state state)
 }
 
 void backward_route_layer(const route_layer l, network_state state)
+=======
+        float *input = net.layers[index].output;
+        int input_size = l.input_sizes[i];
+        for(j = 0; j < l.batch; ++j){
+            copy_cpu(input_size, input + j*input_size, 1, l.output + offset + j*l.outputs, 1);
+        }
+        offset += input_size;
+    }
+}
+
+void backward_route_layer(const route_layer l, network net)
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 {
     int i, j;
     int offset = 0;
     for(i = 0; i < l.n; ++i){
         int index = l.input_layers[i];
+<<<<<<< HEAD
         float *delta = state.net.layers[index].delta;
         int input_size = l.input_sizes[i];
         int part_input_size = input_size / l.groups;
@@ -110,10 +164,19 @@ void backward_route_layer(const route_layer l, network_state state)
         }
         //offset += input_size;
         offset += part_input_size;
+=======
+        float *delta = net.layers[index].delta;
+        int input_size = l.input_sizes[i];
+        for(j = 0; j < l.batch; ++j){
+            axpy_cpu(input_size, 1, l.delta + offset + j*l.outputs, 1, delta + j*input_size, 1);
+        }
+        offset += input_size;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     }
 }
 
 #ifdef GPU
+<<<<<<< HEAD
 void forward_route_layer_gpu(const route_layer l, network_state state)
 {
     if (l.stream >= 0) {
@@ -124,10 +187,15 @@ void forward_route_layer_gpu(const route_layer l, network_state state)
         wait_stream(l.wait_stream_id);
     }
 
+=======
+void forward_route_layer_gpu(const route_layer l, network net)
+{
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     int i, j;
     int offset = 0;
     for(i = 0; i < l.n; ++i){
         int index = l.input_layers[i];
+<<<<<<< HEAD
         float *input = state.net.layers[index].output_gpu;
         int input_size = l.input_sizes[i];
         int part_input_size = input_size / l.groups;
@@ -142,11 +210,24 @@ void forward_route_layer_gpu(const route_layer l, network_state state)
 }
 
 void backward_route_layer_gpu(const route_layer l, network_state state)
+=======
+        float *input = net.layers[index].output_gpu;
+        int input_size = l.input_sizes[i];
+        for(j = 0; j < l.batch; ++j){
+            copy_gpu(input_size, input + j*input_size, 1, l.output_gpu + offset + j*l.outputs, 1);
+        }
+        offset += input_size;
+    }
+}
+
+void backward_route_layer_gpu(const route_layer l, network net)
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 {
     int i, j;
     int offset = 0;
     for(i = 0; i < l.n; ++i){
         int index = l.input_layers[i];
+<<<<<<< HEAD
         float *delta = state.net.layers[index].delta_gpu;
         int input_size = l.input_sizes[i];
         int part_input_size = input_size / l.groups;
@@ -156,6 +237,14 @@ void backward_route_layer_gpu(const route_layer l, network_state state)
         }
         //offset += input_size;
         offset += part_input_size;
+=======
+        float *delta = net.layers[index].delta_gpu;
+        int input_size = l.input_sizes[i];
+        for(j = 0; j < l.batch; ++j){
+            axpy_gpu(input_size, 1, l.delta_gpu + offset + j*l.outputs, 1, delta + j*input_size, 1);
+        }
+        offset += input_size;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     }
 }
 #endif

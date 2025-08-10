@@ -1,9 +1,13 @@
 #include "box.h"
+<<<<<<< HEAD
 #include "utils.h"
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 
+<<<<<<< HEAD
 #ifndef M_PI
 #define M_PI 3.141592
 #endif
@@ -45,6 +49,103 @@ dbox derivative(box a, box b)
 
 
 /*
+=======
+int nms_comparator(const void *pa, const void *pb)
+{
+    detection a = *(detection *)pa;
+    detection b = *(detection *)pb;
+    float diff = 0;
+    if(b.sort_class >= 0){
+        diff = a.prob[b.sort_class] - b.prob[b.sort_class];
+    } else {
+        diff = a.objectness - b.objectness;
+    }
+    if(diff < 0) return 1;
+    else if(diff > 0) return -1;
+    return 0;
+}
+
+void do_nms_obj(detection *dets, int total, int classes, float thresh)
+{
+    int i, j, k;
+    k = total-1;
+    for(i = 0; i <= k; ++i){
+        if(dets[i].objectness == 0){
+            detection swap = dets[i];
+            dets[i] = dets[k];
+            dets[k] = swap;
+            --k;
+            --i;
+        }
+    }
+    total = k+1;
+
+    for(i = 0; i < total; ++i){
+        dets[i].sort_class = -1;
+    }
+
+    qsort(dets, total, sizeof(detection), nms_comparator);
+    for(i = 0; i < total; ++i){
+        if(dets[i].objectness == 0) continue;
+        box a = dets[i].bbox;
+        for(j = i+1; j < total; ++j){
+            if(dets[j].objectness == 0) continue;
+            box b = dets[j].bbox;
+            if (box_iou(a, b) > thresh){
+                dets[j].objectness = 0;
+                for(k = 0; k < classes; ++k){
+                    dets[j].prob[k] = 0;
+                }
+            }
+        }
+    }
+}
+
+
+void do_nms_sort(detection *dets, int total, int classes, float thresh)
+{
+    int i, j, k;
+    k = total-1;
+    for(i = 0; i <= k; ++i){
+        if(dets[i].objectness == 0){
+            detection swap = dets[i];
+            dets[i] = dets[k];
+            dets[k] = swap;
+            --k;
+            --i;
+        }
+    }
+    total = k+1;
+
+    for(k = 0; k < classes; ++k){
+        for(i = 0; i < total; ++i){
+            dets[i].sort_class = k;
+        }
+        qsort(dets, total, sizeof(detection), nms_comparator);
+        for(i = 0; i < total; ++i){
+            if(dets[i].prob[k] == 0) continue;
+            box a = dets[i].bbox;
+            for(j = i+1; j < total; ++j){
+                box b = dets[j].bbox;
+                if (box_iou(a, b) > thresh){
+                    dets[j].prob[k] = 0;
+                }
+            }
+        }
+    }
+}
+
+box float_to_box(float *f, int stride)
+{
+    box b = {0};
+    b.x = f[0];
+    b.y = f[1*stride];
+    b.w = f[2*stride];
+    b.h = f[3*stride];
+    return b;
+}
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 dbox derivative(box a, box b)
 {
     dbox d;
@@ -95,6 +196,7 @@ dbox derivative(box a, box b)
     }
     return d;
 }
+<<<<<<< HEAD
 */
 
 // where c is the smallest box that fully encompases a and b
@@ -120,6 +222,8 @@ boxabs to_tblr(box a) {
     tblr.right = r;
     return tblr;
 }
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 float overlap(float x1, float w1, float x2, float w2)
 {
@@ -148,6 +252,7 @@ float box_union(box a, box b)
     return u;
 }
 
+<<<<<<< HEAD
 float box_iou_kind(box a, box b, IOU_LOSS iou_kind)
 {
     //IOU, GIOU, MSE, DIOU, CIOU
@@ -575,13 +680,24 @@ dxrep dx_box_iou(box pred, box truth, IOU_LOSS iou_loss) {
 //    printf(", dr: %f (t: %f, p: %f) | ", dx.dr, gt_dr, p_dr);
 //#endif */
     return ddx;
+=======
+float box_iou(box a, box b)
+{
+    return box_intersection(a, b)/box_union(a, b);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 float box_rmse(box a, box b)
 {
+<<<<<<< HEAD
     return sqrt(pow(a.x-b.x, 2) +
                 pow(a.y-b.y, 2) +
                 pow(a.w-b.w, 2) +
+=======
+    return sqrt(pow(a.x-b.x, 2) + 
+                pow(a.y-b.y, 2) + 
+                pow(a.w-b.w, 2) + 
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
                 pow(a.h-b.h, 2));
 }
 
@@ -690,6 +806,7 @@ void test_box()
 
 dbox diou(box a, box b)
 {
+<<<<<<< HEAD
     float u = box_union(a, b);
     float i = box_intersection(a, b);
     dbox di = dintersect(a, b);
@@ -697,6 +814,15 @@ dbox diou(box a, box b)
     dbox dd = { 0,0,0,0 };
 
     if (i <= 0 || 1) {
+=======
+    float u = box_union(a,b);
+    float i = box_intersection(a,b);
+    dbox di = dintersect(a,b);
+    dbox du = dunion(a,b);
+    dbox dd = {0,0,0,0};
+
+    if(i <= 0 || 1) {
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         dd.dx = b.x - a.x;
         dd.dy = b.y - a.y;
         dd.dw = b.w - a.w;
@@ -704,6 +830,7 @@ dbox diou(box a, box b)
         return dd;
     }
 
+<<<<<<< HEAD
     dd.dx = (di.dx*u - du.dx*i) / (u*u);
     dd.dy = (di.dy*u - du.dy*i) / (u*u);
     dd.dw = (di.dw*u - du.dw*i) / (u*u);
@@ -842,6 +969,15 @@ void do_nms_sort(detection *dets, int total, int classes, float thresh)
         }
     }
 }
+=======
+    dd.dx = 2*pow((1-(i/u)),1)*(di.dx*u - du.dx*i)/(u*u);
+    dd.dy = 2*pow((1-(i/u)),1)*(di.dy*u - du.dy*i)/(u*u);
+    dd.dw = 2*pow((1-(i/u)),1)*(di.dw*u - du.dw*i)/(u*u);
+    dd.dh = 2*pow((1-(i/u)),1)*(di.dh*u - du.dh*i)/(u*u);
+    return dd;
+}
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 void do_nms(box *boxes, float **probs, int total, int classes, float thresh)
 {
@@ -863,6 +999,7 @@ void do_nms(box *boxes, float **probs, int total, int classes, float thresh)
     }
 }
 
+<<<<<<< HEAD
 // https://github.com/Zzh-tju/DIoU-darknet
 // https://arxiv.org/abs/1911.08287
 void diounms_sort(detection *dets, int total, int classes, float thresh, NMS_KIND nms_kind, float beta1)
@@ -929,6 +1066,8 @@ void diounms_sort(detection *dets, int total, int classes, float thresh, NMS_KIN
     }
 }
 
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 box encode_box(box b, box anchor)
 {
     box encode;

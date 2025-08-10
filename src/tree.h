@@ -2,6 +2,7 @@
 #define TREE_H
 #include "darknet.h"
 
+<<<<<<< HEAD
 //typedef struct{
 //    int *leaf;
 //    int n;
@@ -27,4 +28,9 @@ float get_hierarchy_probability(float *x, tree *hier, int c);
 #ifdef __cplusplus
 }
 #endif
+=======
+int hierarchy_top_prediction(float *predictions, tree *hier, float thresh, int stride);
+float get_hierarchy_probability(float *x, tree *hier, int c, int stride);
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #endif

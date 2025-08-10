@@ -1,7 +1,11 @@
 #include "crnn_layer.h"
 #include "convolutional_layer.h"
 #include "utils.h"
+<<<<<<< HEAD
 #include "dark_cuda.h"
+=======
+#include "cuda.h"
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #include "blas.h"
 #include "gemm.h"
 
@@ -26,6 +30,7 @@ static void increment_layer(layer *l, int steps)
 #endif
 }
 
+<<<<<<< HEAD
 layer make_crnn_layer(int batch, int h, int w, int c, int hidden_filters, int output_filters, int groups, int steps, int size, int stride, int dilation, int pad, ACTIVATION activation, int batch_normalize, int xnor, int train)
 {
     fprintf(stderr, "CRNN Layer: %d x %d x %d image, %d filters\n", h,w,c,output_filters);
@@ -71,6 +76,42 @@ layer make_crnn_layer(int batch, int h, int w, int c, int hidden_filters, int ou
 
     assert(l.input_layer->outputs == l.self_layer->outputs);
     assert(l.input_layer->outputs == l.output_layer->inputs);
+=======
+layer make_crnn_layer(int batch, int h, int w, int c, int hidden_filters, int output_filters, int steps, ACTIVATION activation, int batch_normalize)
+{
+    fprintf(stderr, "CRNN Layer: %d x %d x %d image, %d filters\n", h,w,c,output_filters);
+    batch = batch / steps;
+    layer l = {0};
+    l.batch = batch;
+    l.type = CRNN;
+    l.steps = steps;
+    l.h = h;
+    l.w = w;
+    l.c = c;
+    l.out_h = h;
+    l.out_w = w;
+    l.out_c = output_filters;
+    l.inputs = h*w*c;
+    l.hidden = h * w * hidden_filters;
+    l.outputs = l.out_h * l.out_w * l.out_c;
+
+    l.state = calloc(l.hidden*batch*(steps+1), sizeof(float));
+
+    l.input_layer = malloc(sizeof(layer));
+    fprintf(stderr, "\t\t");
+    *(l.input_layer) = make_convolutional_layer(batch*steps, h, w, c, hidden_filters, 1, 3, 1, 1,  activation, batch_normalize, 0, 0, 0);
+    l.input_layer->batch = batch;
+
+    l.self_layer = malloc(sizeof(layer));
+    fprintf(stderr, "\t\t");
+    *(l.self_layer) = make_convolutional_layer(batch*steps, h, w, hidden_filters, hidden_filters, 1, 3, 1, 1,  activation, batch_normalize, 0, 0, 0);
+    l.self_layer->batch = batch;
+
+    l.output_layer = malloc(sizeof(layer));
+    fprintf(stderr, "\t\t");
+    *(l.output_layer) = make_convolutional_layer(batch*steps, h, w, hidden_filters, output_filters, 1, 3, 1, 1,  activation, batch_normalize, 0, 0, 0);
+    l.output_layer->batch = batch;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
     l.output = l.output_layer->output;
     l.delta = l.output_layer->delta;
@@ -83,11 +124,17 @@ layer make_crnn_layer(int batch, int h, int w, int c, int hidden_filters, int ou
     l.forward_gpu = forward_crnn_layer_gpu;
     l.backward_gpu = backward_crnn_layer_gpu;
     l.update_gpu = update_crnn_layer_gpu;
+<<<<<<< HEAD
     l.state_gpu = cuda_make_array(l.state, l.batch*l.hidden*(l.steps + 1));
+=======
+
+    l.state_gpu = cuda_make_array(l.state, l.hidden*batch*(steps+1));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     l.output_gpu = l.output_layer->output_gpu;
     l.delta_gpu = l.output_layer->delta_gpu;
 #endif
 
+<<<<<<< HEAD
     l.bflops = l.input_layer->bflops + l.self_layer->bflops + l.output_layer->bflops;
 
     return l;
@@ -157,11 +204,28 @@ void forward_crnn_layer(layer l, network_state state)
     s.workspace = state.workspace;
     s.net = state.net;
     //s.index = state.index;
+=======
+    return l;
+}
+
+void update_crnn_layer(layer l, update_args a)
+{
+    update_convolutional_layer(*(l.input_layer),  a);
+    update_convolutional_layer(*(l.self_layer),   a);
+    update_convolutional_layer(*(l.output_layer), a);
+}
+
+void forward_crnn_layer(layer l, network net)
+{
+    network s = net;
+    s.train = net.train;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     int i;
     layer input_layer = *(l.input_layer);
     layer self_layer = *(l.self_layer);
     layer output_layer = *(l.output_layer);
 
+<<<<<<< HEAD
     if (state.train) {
         fill_cpu(l.outputs * l.batch * l.steps, 0, output_layer.delta, 1);
         fill_cpu(l.hidden * l.batch * l.steps, 0, self_layer.delta, 1);
@@ -171,13 +235,26 @@ void forward_crnn_layer(layer l, network_state state)
 
     for (i = 0; i < l.steps; ++i) {
         s.input = state.input;
+=======
+    fill_cpu(l.outputs * l.batch * l.steps, 0, output_layer.delta, 1);
+    fill_cpu(l.hidden * l.batch * l.steps, 0, self_layer.delta, 1);
+    fill_cpu(l.hidden * l.batch * l.steps, 0, input_layer.delta, 1);
+    if(net.train) fill_cpu(l.hidden * l.batch, 0, l.state, 1);
+
+    for (i = 0; i < l.steps; ++i) {
+        s.input = net.input;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         forward_convolutional_layer(input_layer, s);
 
         s.input = l.state;
         forward_convolutional_layer(self_layer, s);
 
         float *old_state = l.state;
+<<<<<<< HEAD
         if(state.train) l.state += l.hidden*l.batch;
+=======
+        if(net.train) l.state += l.hidden*l.batch;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         if(l.shortcut){
             copy_cpu(l.hidden * l.batch, old_state, 1, l.state, 1);
         }else{
@@ -189,13 +266,18 @@ void forward_crnn_layer(layer l, network_state state)
         s.input = l.state;
         forward_convolutional_layer(output_layer, s);
 
+<<<<<<< HEAD
         state.input += l.inputs*l.batch;
+=======
+        net.input += l.inputs*l.batch;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         increment_layer(&input_layer, 1);
         increment_layer(&self_layer, 1);
         increment_layer(&output_layer, 1);
     }
 }
 
+<<<<<<< HEAD
 void backward_crnn_layer(layer l, network_state state)
 {
     network_state s = {0};
@@ -203,6 +285,11 @@ void backward_crnn_layer(layer l, network_state state)
     s.workspace = state.workspace;
     s.net = state.net;
     //s.index = state.index;
+=======
+void backward_crnn_layer(layer l, network net)
+{
+    network s = net;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     int i;
     layer input_layer = *(l.input_layer);
     layer self_layer = *(l.self_layer);
@@ -238,8 +325,13 @@ void backward_crnn_layer(layer l, network_state state)
 
         copy_cpu(l.hidden*l.batch, self_layer.delta, 1, input_layer.delta, 1);
         if (i > 0 && l.shortcut) axpy_cpu(l.hidden*l.batch, 1, self_layer.delta, 1, self_layer.delta - l.hidden*l.batch, 1);
+<<<<<<< HEAD
         s.input = state.input + i*l.inputs*l.batch;
         if(state.delta) s.delta = state.delta + i*l.inputs*l.batch;
+=======
+        s.input = net.input + i*l.inputs*l.batch;
+        if(net.delta) s.delta = net.delta + i*l.inputs*l.batch;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         else s.delta = 0;
         backward_convolutional_layer(input_layer, s);
 
@@ -265,6 +357,7 @@ void push_crnn_layer(layer l)
     push_convolutional_layer(*(l.output_layer));
 }
 
+<<<<<<< HEAD
 void update_crnn_layer_gpu(layer l, int batch, float learning_rate, float momentum, float decay, float loss_scale)
 {
     update_convolutional_layer_gpu(*(l.input_layer), batch, learning_rate, momentum, decay, loss_scale);
@@ -279,11 +372,24 @@ void forward_crnn_layer_gpu(layer l, network_state state)
     s.workspace = state.workspace;
     s.net = state.net;
     if(!state.train) s.index = state.index;  // don't use TC for training (especially without cuda_convert_f32_to_f16() )
+=======
+void update_crnn_layer_gpu(layer l, update_args a)
+{
+    update_convolutional_layer_gpu(*(l.input_layer),  a);
+    update_convolutional_layer_gpu(*(l.self_layer),   a);
+    update_convolutional_layer_gpu(*(l.output_layer), a);
+}
+
+void forward_crnn_layer_gpu(layer l, network net)
+{
+    network s = net;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     int i;
     layer input_layer = *(l.input_layer);
     layer self_layer = *(l.self_layer);
     layer output_layer = *(l.output_layer);
 
+<<<<<<< HEAD
 /*
 #ifdef CUDNN_HALF   // slow and bad for training
     if (!state.train && state.net.cudnn_half) {
@@ -323,12 +429,41 @@ void forward_crnn_layer_gpu(layer l, network_state state)
         forward_convolutional_layer_gpu(output_layer, s);
 
         state.input += l.inputs*l.batch;
+=======
+    fill_gpu(l.outputs * l.batch * l.steps, 0, output_layer.delta_gpu, 1);
+    fill_gpu(l.hidden * l.batch * l.steps, 0, self_layer.delta_gpu, 1);
+    fill_gpu(l.hidden * l.batch * l.steps, 0, input_layer.delta_gpu, 1);
+    if(net.train) fill_gpu(l.hidden * l.batch, 0, l.state_gpu, 1);
+
+    for (i = 0; i < l.steps; ++i) {
+        s.input_gpu = net.input_gpu;
+        forward_convolutional_layer_gpu(input_layer, s);
+
+        s.input_gpu = l.state_gpu;
+        forward_convolutional_layer_gpu(self_layer, s);
+
+        float *old_state = l.state_gpu;
+        if(net.train) l.state_gpu += l.hidden*l.batch;
+        if(l.shortcut){
+            copy_gpu(l.hidden * l.batch, old_state, 1, l.state_gpu, 1);
+        }else{
+            fill_gpu(l.hidden * l.batch, 0, l.state_gpu, 1);
+        }
+        axpy_gpu(l.hidden * l.batch, 1, input_layer.output_gpu, 1, l.state_gpu, 1);
+        axpy_gpu(l.hidden * l.batch, 1, self_layer.output_gpu, 1, l.state_gpu, 1);
+
+        s.input_gpu = l.state_gpu;
+        forward_convolutional_layer_gpu(output_layer, s);
+
+        net.input_gpu += l.inputs*l.batch;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         increment_layer(&input_layer, 1);
         increment_layer(&self_layer, 1);
         increment_layer(&output_layer, 1);
     }
 }
 
+<<<<<<< HEAD
 void backward_crnn_layer_gpu(layer l, network_state state)
 {
     network_state s = {0};
@@ -336,6 +471,12 @@ void backward_crnn_layer_gpu(layer l, network_state state)
     s.workspace = state.workspace;
     s.net = state.net;
     //s.index = state.index;
+=======
+void backward_crnn_layer_gpu(layer l, network net)
+{
+    network s = net;
+    s.train = net.train;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     int i;
     layer input_layer = *(l.input_layer);
     layer self_layer = *(l.self_layer);
@@ -343,6 +484,7 @@ void backward_crnn_layer_gpu(layer l, network_state state)
     increment_layer(&input_layer,  l.steps - 1);
     increment_layer(&self_layer,   l.steps - 1);
     increment_layer(&output_layer, l.steps - 1);
+<<<<<<< HEAD
     float *init_state_gpu = l.state_gpu;
     l.state_gpu += l.hidden*l.batch*l.steps;
     for (i = l.steps-1; i >= 0; --i) {
@@ -351,10 +493,20 @@ void backward_crnn_layer_gpu(layer l, network_state state)
 
         s.input = l.state_gpu;
         s.delta = self_layer.delta_gpu;
+=======
+    l.state_gpu += l.hidden*l.batch*l.steps;
+    for (i = l.steps-1; i >= 0; --i) {
+        copy_gpu(l.hidden * l.batch, input_layer.output_gpu, 1, l.state_gpu, 1);
+        axpy_gpu(l.hidden * l.batch, 1, self_layer.output_gpu, 1, l.state_gpu, 1);
+
+        s.input_gpu = l.state_gpu;
+        s.delta_gpu = self_layer.delta_gpu;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         backward_convolutional_layer_gpu(output_layer, s);
 
         l.state_gpu -= l.hidden*l.batch;
 
+<<<<<<< HEAD
         copy_ongpu(l.hidden*l.batch, self_layer.delta_gpu, 1, input_layer.delta_gpu, 1);
 
         s.input = l.state_gpu;
@@ -374,10 +526,27 @@ void backward_crnn_layer_gpu(layer l, network_state state)
             fix_nan_and_inf(input_layer.delta_gpu, input_layer.inputs * input_layer.batch);
         }
 
+=======
+        s.input_gpu = l.state_gpu;
+        s.delta_gpu = self_layer.delta_gpu - l.hidden*l.batch;
+        if (i == 0) s.delta_gpu = 0;
+        backward_convolutional_layer_gpu(self_layer, s);
+
+        copy_gpu(l.hidden*l.batch, self_layer.delta_gpu, 1, input_layer.delta_gpu, 1);
+        if (i > 0 && l.shortcut) axpy_gpu(l.hidden*l.batch, 1, self_layer.delta_gpu, 1, self_layer.delta_gpu - l.hidden*l.batch, 1);
+        s.input_gpu = net.input_gpu + i*l.inputs*l.batch;
+        if(net.delta_gpu) s.delta_gpu = net.delta_gpu + i*l.inputs*l.batch;
+        else s.delta_gpu = 0;
+        backward_convolutional_layer_gpu(input_layer, s);
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         increment_layer(&input_layer,  -1);
         increment_layer(&self_layer,   -1);
         increment_layer(&output_layer, -1);
     }
+<<<<<<< HEAD
     fill_ongpu(l.hidden * l.batch, 0, init_state_gpu, 1); //clean l.state_gpu
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 #endif

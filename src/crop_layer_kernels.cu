@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <cuda_runtime.h>
 #include <curand.h>
 #include <cublas_v2.h>
@@ -6,6 +7,18 @@
 #include "utils.h"
 #include "dark_cuda.h"
 #include "image.h"
+=======
+#include "cuda_runtime.h"
+#include "curand.h"
+#include "cublas_v2.h"
+
+extern "C" {
+#include "crop_layer.h"
+#include "utils.h"
+#include "cuda.h"
+#include "image.h"
+}
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 __device__ float get_pixel_kernel(float *image, int w, int h, int x, int y, int c)
 {
@@ -16,7 +29,11 @@ __device__ float get_pixel_kernel(float *image, int w, int h, int x, int y, int 
 __device__ float3 rgb_to_hsv_kernel(float3 rgb)
 {
     float r = rgb.x;
+<<<<<<< HEAD
     float g = rgb.y;
+=======
+    float g = rgb.y; 
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     float b = rgb.z;
 
     float h, s, v;
@@ -44,7 +61,11 @@ __device__ float3 rgb_to_hsv_kernel(float3 rgb)
 __device__ float3 hsv_to_rgb_kernel(float3 hsv)
 {
     float h = hsv.x;
+<<<<<<< HEAD
     float s = hsv.y;
+=======
+    float s = hsv.y; 
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     float v = hsv.z;
 
     float r, g, b;
@@ -86,8 +107,13 @@ __device__ float bilinear_interpolate_kernel(float *image, int w, int h, float x
     float dx = x - ix;
     float dy = y - iy;
 
+<<<<<<< HEAD
     float val = (1-dy) * (1-dx) * get_pixel_kernel(image, w, h, ix, iy, c) +
         dy     * (1-dx) * get_pixel_kernel(image, w, h, ix, iy+1, c) +
+=======
+    float val = (1-dy) * (1-dx) * get_pixel_kernel(image, w, h, ix, iy, c) + 
+        dy     * (1-dx) * get_pixel_kernel(image, w, h, ix, iy+1, c) + 
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         (1-dy) *   dx   * get_pixel_kernel(image, w, h, ix+1, iy, c) +
         dy     *   dx   * get_pixel_kernel(image, w, h, ix+1, iy+1, c);
     return val;
@@ -111,9 +137,15 @@ __global__ void levels_image_kernel(float *image, float *rand, int batch, int w,
     float r3 = rand[8*id + 3];
 
     saturation = r0*(saturation - 1) + 1;
+<<<<<<< HEAD
     saturation = (r1 > .5) ? 1./saturation : saturation;
     exposure = r2*(exposure - 1) + 1;
     exposure = (r3 > .5) ? 1./exposure : exposure;
+=======
+    saturation = (r1 > .5f) ? 1.f/saturation : saturation;
+    exposure = r2*(exposure - 1) + 1;
+    exposure = (r3 > .5f) ? 1.f/exposure : exposure;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
     size_t offset = id * h * w * 3;
     image += offset;
@@ -129,9 +161,15 @@ __global__ void levels_image_kernel(float *image, float *rand, int batch, int w,
     } else {
         shift = 0;
     }
+<<<<<<< HEAD
     image[x + w*(y + h*0)] = rgb.x*scale + translate + (rshift - .5)*shift;
     image[x + w*(y + h*1)] = rgb.y*scale + translate + (gshift - .5)*shift;
     image[x + w*(y + h*2)] = rgb.z*scale + translate + (bshift - .5)*shift;
+=======
+    image[x + w*(y + h*0)] = rgb.x*scale + translate + (rshift - .5f)*shift;
+    image[x + w*(y + h*1)] = rgb.y*scale + translate + (gshift - .5f)*shift;
+    image[x + w*(y + h*2)] = rgb.z*scale + translate + (bshift - .5f)*shift;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 __global__ void forward_crop_layer_kernel(float *input, float *rand, int size, int c, int h, int w, int crop_height, int crop_width, int train, int flip, float angle, float *output)
@@ -139,8 +177,13 @@ __global__ void forward_crop_layer_kernel(float *input, float *rand, int size, i
     int id = (blockIdx.x + blockIdx.y*gridDim.x) * blockDim.x + threadIdx.x;
     if(id >= size) return;
 
+<<<<<<< HEAD
     float cx = w/2.;
     float cy = h/2.;
+=======
+    float cx = w/2.f;
+    float cy = h/2.f;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
     int count = id;
     int j = id % crop_width;
@@ -158,31 +201,55 @@ __global__ void forward_crop_layer_kernel(float *input, float *rand, int size, i
 
     float dw = (w - crop_width)*r4;
     float dh = (h - crop_height)*r5;
+<<<<<<< HEAD
     flip = (flip && (r6 > .5));
     angle = 2*angle*r7 - angle;
     if(!train){
         dw = (w - crop_width)/2.;
         dh = (h - crop_height)/2.;
+=======
+    flip = (flip && (r6 > .5f));
+    angle = 2*angle*r7 - angle;
+    if(!train){
+        dw = (w - crop_width)/2.f;
+        dh = (h - crop_height)/2.f;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         flip = 0;
         angle = 0;
     }
 
     input += w*h*c*b;
 
+<<<<<<< HEAD
     float x = (flip) ? w - dw - j - 1 : j + dw;
     float y = i + dh;
 
     float rx = cos(angle)*(x-cx) - sin(angle)*(y-cy) + cx;
     float ry = sin(angle)*(x-cx) + cos(angle)*(y-cy) + cy;
+=======
+    float x = (flip) ? w - dw - j - 1 : j + dw;    
+    float y = i + dh;
+
+    float rx = cosf(angle)*(x-cx) - sinf(angle)*(y-cy) + cx;
+    float ry = sinf(angle)*(x-cx) + cosf(angle)*(y-cy) + cy;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
     output[count] = bilinear_interpolate_kernel(input, w, h, rx, ry, k);
 }
 
+<<<<<<< HEAD
 extern "C" void forward_crop_layer_gpu(crop_layer layer, network_state state)
 {
     cuda_random(layer.rand_gpu, layer.batch*8);
 
     float radians = layer.angle*3.14159265/180.;
+=======
+extern "C" void forward_crop_layer_gpu(crop_layer layer, network net)
+{
+    cuda_random(layer.rand_gpu, layer.batch*8);
+
+    float radians = layer.angle*3.14159265f/180.f;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
     float scale = 2;
     float translate = -1;
@@ -193,6 +260,7 @@ extern "C" void forward_crop_layer_gpu(crop_layer layer, network_state state)
 
     int size = layer.batch * layer.w * layer.h;
 
+<<<<<<< HEAD
     levels_image_kernel<<<cuda_gridsize(size), BLOCK, 0, get_cuda_stream() >>>(state.input, layer.rand_gpu, layer.batch, layer.w, layer.h, state.train, layer.saturation, layer.exposure, translate, scale, layer.shift);
     CHECK_CUDA(cudaPeekAtLastError());
 
@@ -200,6 +268,15 @@ extern "C" void forward_crop_layer_gpu(crop_layer layer, network_state state)
 
     forward_crop_layer_kernel<<<cuda_gridsize(size), BLOCK, 0, get_cuda_stream() >>>(state.input, layer.rand_gpu, size, layer.c, layer.h, layer.w, layer.out_h, layer.out_w, state.train, layer.flip, radians, layer.output_gpu);
     CHECK_CUDA(cudaPeekAtLastError());
+=======
+    levels_image_kernel<<<cuda_gridsize(size), BLOCK>>>(net.input_gpu, layer.rand_gpu, layer.batch, layer.w, layer.h, net.train, layer.saturation, layer.exposure, translate, scale, layer.shift);
+    check_error(cudaPeekAtLastError());
+
+    size = layer.batch*layer.c*layer.out_w*layer.out_h;
+
+    forward_crop_layer_kernel<<<cuda_gridsize(size), BLOCK>>>(net.input_gpu, layer.rand_gpu, size, layer.c, layer.h, layer.w, layer.out_h, layer.out_w, net.train, layer.flip, radians, layer.output_gpu);
+    check_error(cudaPeekAtLastError());
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 /*
        cuda_pull_array(layer.output_gpu, layer.output, size);
@@ -213,10 +290,18 @@ extern "C" void forward_crop_layer_gpu(crop_layer layer, network_state state)
        scale_image(im2, 1/scale);
        translate_image(im3, -translate);
        scale_image(im3, 1/scale);
+<<<<<<< HEAD
 
+=======
+       
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
        show_image(im, "cropped");
        show_image(im2, "cropped2");
        show_image(im3, "cropped3");
        cvWaitKey(0);
        */
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

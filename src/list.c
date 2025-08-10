@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "list.h"
+<<<<<<< HEAD
 #include "utils.h"
 #include "option_list.h"
 
@@ -11,6 +12,16 @@ list *make_list()
     l->front = 0;
     l->back = 0;
     return l;
+=======
+
+list *make_list()
+{
+	list *l = malloc(sizeof(list));
+	l->size = 0;
+	l->front = 0;
+	l->back = 0;
+	return l;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 /*
@@ -35,12 +46,17 @@ void *list_pop(list *l){
     if(l->back) l->back->next = 0;
     free(b);
     --l->size;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     return val;
 }
 
 void list_insert(list *l, void *val)
 {
+<<<<<<< HEAD
     node* newnode = (node*)xmalloc(sizeof(node));
     newnode->val = val;
     newnode->next = 0;
@@ -54,10 +70,26 @@ void list_insert(list *l, void *val)
     }
     l->back = newnode;
     ++l->size;
+=======
+	node *new = malloc(sizeof(node));
+	new->val = val;
+	new->next = 0;
+
+	if(!l->back){
+		l->front = new;
+		new->prev = 0;
+	}else{
+		l->back->next = new;
+		new->prev = l->back;
+	}
+	l->back = new;
+	++l->size;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 void free_node(node *n)
 {
+<<<<<<< HEAD
     node *next;
     while(n) {
         next = n->next;
@@ -75,16 +107,30 @@ void free_list_val(list *l)
         free(n->val);
         n = next;
     }
+=======
+	node *next;
+	while(n) {
+		next = n->next;
+		free(n);
+		n = next;
+	}
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 void free_list(list *l)
 {
+<<<<<<< HEAD
     free_node(l->front);
     free(l);
+=======
+	free_node(l->front);
+	free(l);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 void free_list_contents(list *l)
 {
+<<<<<<< HEAD
     node *n = l->front;
     while(n){
         free(n->val);
@@ -101,11 +147,22 @@ void free_list_contents_kvp(list *l)
         free(n->val);
         n = n->next;
     }
+=======
+	node *n = l->front;
+	while(n){
+		free(n->val);
+		n = n->next;
+	}
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 void **list_to_array(list *l)
 {
+<<<<<<< HEAD
     void** a = (void**)xcalloc(l->size, sizeof(void*));
+=======
+    void **a = calloc(l->size, sizeof(void*));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     int count = 0;
     node *n = l->front;
     while(n){

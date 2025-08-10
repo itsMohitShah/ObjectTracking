@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include "darknet.h"
 #include <cuda_runtime.h>
 #include <curand.h>
@@ -11,6 +12,22 @@ __device__ float lhtan_activate_kernel(float x)
 {
     if(x < 0) return .001*x;
     if(x > 1) return .001*(x-1) + 1;
+=======
+#include "cuda_runtime.h"
+#include "curand.h"
+#include "cublas_v2.h"
+
+extern "C" {
+#include "activations.h"
+#include "cuda.h"
+}
+
+
+__device__ float lhtan_activate_kernel(float x)
+{
+    if(x < 0) return .001f*x;
+    if(x > 1) return .001f*(x-1.f) + 1.f;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     return x;
 }
 __device__ float lhtan_gradient_kernel(float x)
@@ -29,6 +46,7 @@ __device__ float linear_activate_kernel(float x){return x;}
 __device__ float logistic_activate_kernel(float x){return 1.f/(1.f + expf(-x));}
 __device__ float loggy_activate_kernel(float x){return 2.f/(1.f + expf(-x)) - 1;}
 __device__ float relu_activate_kernel(float x){return x*(x>0);}
+<<<<<<< HEAD
 __device__ float relu6_activate_kernel(float x) { return min_val_cmp(max_val_cmp(x, 0), 6); }
 __device__ float elu_activate_kernel(float x){return (x >= 0)*x + (x < 0)*(expf(x)-1);}
 __device__ float selu_activate_kernel(float x) { return (x >= 0)*1.0507f*x + (x < 0)*1.0507f*1.6732f*(expf(x) - 1); }
@@ -43,6 +61,14 @@ __device__ float softplus_kernel(float x, float threshold = 20) {
     return log1pf(expf(x));
     //return logf(expf(x) + 1);
 }
+=======
+__device__ float elu_activate_kernel(float x){return (x >= 0)*x + (x < 0)*(expf(x)-1);}
+__device__ float selu_activate_kernel(float x){return (x >= 0)*1.0507f*x + (x < 0)*1.0507f*1.6732f*(expf(x)-1);}
+__device__ float relie_activate_kernel(float x){return (x>0) ? x : .01f*x;}
+__device__ float ramp_activate_kernel(float x){return x*(x>0)+.1f*x;}
+__device__ float leaky_activate_kernel(float x){return (x>0) ? x : .1f*x;}
+__device__ float tanh_activate_kernel(float x){return (2.f/(1 + expf(-2*x)) - 1);}
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 __device__ float plse_activate_kernel(float x)
 {
     if(x < -4) return .01f * (x + 4);
@@ -52,10 +78,17 @@ __device__ float plse_activate_kernel(float x)
 __device__ float stair_activate_kernel(float x)
 {
     int n = floorf(x);
+<<<<<<< HEAD
     if (n%2 == 0) return floorf(x/2.f);
     else return (x - n) + floorf(x/2.f);
 }
 
+=======
+    if (n%2 == 0) return floorf(x/2);
+    else return (x - n) + floorf(x/2);
+}
+ 
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 __device__ float hardtan_gradient_kernel(float x)
 {
@@ -66,6 +99,7 @@ __device__ float linear_gradient_kernel(float x){return 1;}
 __device__ float logistic_gradient_kernel(float x){return (1-x)*x;}
 __device__ float loggy_gradient_kernel(float x)
 {
+<<<<<<< HEAD
     float y = (x+1.F)/2.F;
     return 2*(1-y)*y;
 }
@@ -73,15 +107,26 @@ __device__ float relu_gradient_kernel(float x){return (x>0);}
 __device__ float relu6_gradient_kernel(float x) { return (x > 0 && x < 6); }
 __device__ float elu_gradient_kernel(float x){return (x >= 0) + (x < 0)*(x + 1);}
 __device__ float selu_gradient_kernel(float x) { return (x >= 0)*1.0507f + (x < 0)*(x + 1.0507f*1.6732f); }
+=======
+    float y = (x+1)/2;
+    return 2*(1-y)*y;
+}
+__device__ float relu_gradient_kernel(float x){return (x>0);}
+__device__ float elu_gradient_kernel(float x){return (x >= 0) + (x < 0)*(x + 1);}
+__device__ float selu_gradient_kernel(float x){return (x >= 0)*1.0507 + (x < 0)*(x + 1.0507*1.6732);}
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 __device__ float relie_gradient_kernel(float x){return (x>0) ? 1 : .01f;}
 __device__ float ramp_gradient_kernel(float x){return (x>0)+.1f;}
 __device__ float leaky_gradient_kernel(float x){return (x>0) ? 1 : .1f;}
 __device__ float tanh_gradient_kernel(float x){return 1-x*x;}
+<<<<<<< HEAD
 __device__ float sech_gpu(float x) { return 2 / (expf(x) + expf(-x)); }
 __device__ float gelu_gradient_kernel(float x) {
     const float x3 = powf(x, 3);
     return 0.5*tanhf(0.0356774*x3 + 0.797885*x) + (0.0535161*x3 + 0.398942*x) * powf(sech_gpu(0.0356774*x3 + 0.797885*x), 2) + 0.5;
 }
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 __device__ float plse_gradient_kernel(float x){return (x < 0 || x > 1) ? .01f : .125f;}
 __device__ float stair_gradient_kernel(float x)
 {
@@ -100,14 +145,20 @@ __device__ float activate_kernel(float x, ACTIVATION a)
             return loggy_activate_kernel(x);
         case RELU:
             return relu_activate_kernel(x);
+<<<<<<< HEAD
         case RELU6:
             return relu6_activate_kernel(x);
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         case ELU:
             return elu_activate_kernel(x);
         case SELU:
             return selu_activate_kernel(x);
+<<<<<<< HEAD
         case GELU:
             return gelu_activate_kernel(x);
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         case RELIE:
             return relie_activate_kernel(x);
         case RAMP:
@@ -130,6 +181,7 @@ __device__ float activate_kernel(float x, ACTIVATION a)
 
 __device__ float gradient_kernel(float x, ACTIVATION a)
 {
+<<<<<<< HEAD
     switch (a) {
     case LINEAR:
         return linear_gradient_kernel(x);
@@ -165,6 +217,37 @@ __device__ float gradient_kernel(float x, ACTIVATION a)
         return hardtan_gradient_kernel(x);
     case LHTAN:
         return lhtan_gradient_kernel(x);
+=======
+    switch(a){
+        case LINEAR:
+            return linear_gradient_kernel(x);
+        case LOGISTIC:
+            return logistic_gradient_kernel(x);
+        case LOGGY:
+            return loggy_gradient_kernel(x);
+        case RELU:
+            return relu_gradient_kernel(x);
+        case ELU:
+            return elu_gradient_kernel(x);
+        case SELU:
+            return selu_gradient_kernel(x);
+        case RELIE:
+            return relie_gradient_kernel(x);
+        case RAMP:
+            return ramp_gradient_kernel(x);
+        case LEAKY:
+            return leaky_gradient_kernel(x);
+        case TANH:
+            return tanh_gradient_kernel(x);
+        case PLSE:
+            return plse_gradient_kernel(x);
+        case STAIR:
+            return stair_gradient_kernel(x);
+        case HARDTAN:
+            return hardtan_gradient_kernel(x);
+        case LHTAN:
+            return lhtan_gradient_kernel(x);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     }
     return 0;
 }
@@ -175,6 +258,7 @@ __global__ void binary_gradient_array_kernel(float *x, float *dy, int n, int s, 
     int i = id % s;
     int b = id / s;
     float x1 = x[b*s + i];
+<<<<<<< HEAD
     float x2 = x[b*s + s / 2 + i];
     if (id < n) {
         float de = dy[id];
@@ -187,6 +271,20 @@ extern "C" void binary_gradient_array_gpu(float *x, float *dx, int n, int size, 
 {
     binary_gradient_array_kernel <<<cuda_gridsize(n / 2), BLOCK, 0, get_cuda_stream() >>>(x, dx, n / 2, size, a, y);
     CHECK_CUDA(cudaPeekAtLastError());
+=======
+    float x2 = x[b*s + s/2 + i];
+    if(id < n) {
+        float de = dy[id];
+        dx[b*s + i] = x2*de;
+        dx[b*s + s/2 + i] = x1*de; 
+    }
+}
+
+extern "C" void binary_gradient_array_gpu(float *x, float *dx, int n, int size, BINARY_ACTIVATION a, float *y) 
+{
+    binary_gradient_array_kernel<<<cuda_gridsize(n/2), BLOCK>>>(x, dx, n/2, size, a, y);
+    check_error(cudaPeekAtLastError());
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 __global__ void binary_activate_array_kernel(float *x, int n, int s, BINARY_ACTIVATION a, float *y)
 {
@@ -194,6 +292,7 @@ __global__ void binary_activate_array_kernel(float *x, int n, int s, BINARY_ACTI
     int i = id % s;
     int b = id / s;
     float x1 = x[b*s + i];
+<<<<<<< HEAD
     float x2 = x[b*s + s / 2 + i];
     if (id < n) y[id] = x1*x2;
 }
@@ -202,6 +301,16 @@ extern "C" void binary_activate_array_gpu(float *x, int n, int size, BINARY_ACTI
 {
     binary_activate_array_kernel <<<cuda_gridsize(n / 2), BLOCK, 0, get_cuda_stream() >>>(x, n / 2, size, a, y);
     CHECK_CUDA(cudaPeekAtLastError());
+=======
+    float x2 = x[b*s + s/2 + i];
+    if(id < n) y[id] = x1*x2;
+}
+
+extern "C" void binary_activate_array_gpu(float *x, int n, int size, BINARY_ACTIVATION a, float *y) 
+{
+    binary_activate_array_kernel<<<cuda_gridsize(n/2), BLOCK>>>(x, n/2, size, a, y);
+    check_error(cudaPeekAtLastError());
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }
 
 __global__ void activate_array_kernel(float *x, int n, ACTIVATION a)
@@ -210,6 +319,7 @@ __global__ void activate_array_kernel(float *x, int n, ACTIVATION a)
     if(i < n) x[i] = activate_kernel(x[i], a);
 }
 
+<<<<<<< HEAD
 
 
 __global__ void activate_array_swish_kernel(float *x, int n, float *output_sigmoid_gpu, float *output_gpu)
@@ -357,12 +467,15 @@ __global__ void activate_array_relu6_kernel(float *x, int n)
     }
 }
 
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 __global__ void gradient_array_kernel(float *x, int n, ACTIVATION a, float *delta)
 {
     int i = (blockIdx.x + blockIdx.y*gridDim.x) * blockDim.x + threadIdx.x;
     if(i < n) delta[i] *= gradient_kernel(x[i], a);
 }
 
+<<<<<<< HEAD
 // https://github.com/BVLC/caffe/blob/04ab089db018a292ae48d51732dd6c66766b36b6/src/caffe/layers/swish_layer.cu#L28-L30
 __global__ void gradient_array_swish_kernel(float *x, int n, float *sigmoid_gpu, float *delta)
 {
@@ -742,4 +855,16 @@ extern "C" void gradient_array_normalize_channels_ongpu(float *output_gpu, int n
 
     gradient_array_normalize_channels_kernel <<<num_blocks, BLOCK, 0, get_cuda_stream() >>> (output_gpu, size, batch, channels, wh_step, delta_gpu);
     CHECK_CUDA(cudaPeekAtLastError());
+=======
+extern "C" void activate_array_gpu(float *x, int n, ACTIVATION a) 
+{
+    activate_array_kernel<<<cuda_gridsize(n), BLOCK>>>(x, n, a);
+    check_error(cudaPeekAtLastError());
+}
+
+extern "C" void gradient_array_gpu(float *x, int n, ACTIVATION a, float *delta) 
+{
+    gradient_array_kernel<<<cuda_gridsize(n), BLOCK>>>(x, n, a, delta);
+    check_error(cudaPeekAtLastError());
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 }

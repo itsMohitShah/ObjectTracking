@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ifndef CLASSIFIER_H
 #define CLASSIFIER_H
 
@@ -10,3 +11,6 @@ list *read_data_cfg(char *filename);
 }
 #endif
 #endif
+=======
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

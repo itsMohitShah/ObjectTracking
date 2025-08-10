@@ -6,6 +6,7 @@
 
 typedef layer dropout_layer;
 
+<<<<<<< HEAD
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -23,4 +24,17 @@ void backward_dropout_layer_gpu(dropout_layer l, network_state state);
 #ifdef __cplusplus
 }
 #endif
+=======
+dropout_layer make_dropout_layer(int batch, int inputs, float probability);
+
+void forward_dropout_layer(dropout_layer l, network net);
+void backward_dropout_layer(dropout_layer l, network net);
+void resize_dropout_layer(dropout_layer *l, int inputs);
+
+#ifdef GPU
+void forward_dropout_layer_gpu(dropout_layer l, network net);
+void backward_dropout_layer_gpu(dropout_layer l, network net);
+
+#endif
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #endif

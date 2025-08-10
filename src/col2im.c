@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <math.h>
+<<<<<<< HEAD
 #include <string.h>
 #include "col2im.h"
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 void col2im_add_pixel(float *im, int height, int width, int channels,
                         int row, int col, int channel, int pad, float val)
 {
@@ -15,7 +18,11 @@ void col2im_add_pixel(float *im, int height, int width, int channels,
 //This one might be too, can't remember.
 void col2im_cpu(float* data_col,
          int channels,  int height,  int width,
+<<<<<<< HEAD
          int ksize,  int stride, int pad, float* data_im)
+=======
+         int ksize,  int stride, int pad, float* data_im) 
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 {
     int c,h,w;
     int height_col = (height + 2*pad - ksize) / stride + 1;
@@ -31,13 +38,18 @@ void col2im_cpu(float* data_col,
                 int im_row = h_offset + h * stride;
                 int im_col = w_offset + w * stride;
                 int col_index = (c * height_col + h) * width_col + w;
+<<<<<<< HEAD
                 float val = data_col[col_index];
+=======
+                double val = data_col[col_index];
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
                 col2im_add_pixel(data_im, height, width, channels,
                         im_row, im_col, c_im, pad, val);
             }
         }
     }
 }
+<<<<<<< HEAD
 // ----------------------------------------
 void caffe_set(const int N, const float alpha, float* Y) {
     if (alpha == 0) {
@@ -93,3 +105,6 @@ void col2im_cpu_ext(const float* data_col, const int channels,
         }
     }
 }
+=======
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

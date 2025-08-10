@@ -1,12 +1,16 @@
 #ifndef IMAGE_H
 #define IMAGE_H
+<<<<<<< HEAD
 #include "darknet.h"
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <float.h>
 #include <string.h>
 #include <math.h>
+<<<<<<< HEAD
 
 #include "image_opencv.h"
 
@@ -50,10 +54,42 @@ void normalize_image(image p);
 image rotate_image(image m, float rad);
 void rotate_image_cw(image im, int times);
 void embed_image(image source, image dest, int dx, int dy);
+=======
+#include "box.h"
+#include "darknet.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef OPENCV
+void *open_video_stream(const char *f, int c, int w, int h, int fps);
+image get_image_from_stream(void *p);
+image load_image_cv(char *filename, int channels);
+int show_image_cv(image im, const char* name, int ms);
+#endif
+
+float get_color(int c, int x, int max);
+void draw_box(image a, int x1, int y1, int x2, int y2, float r, float g, float b);
+void draw_bbox(image a, box bbox, int w, float r, float g, float b);
+void write_label(image a, int r, int c, image *characters, char *string, float *rgb);
+image image_distance(image a, image b);
+void scale_image(image m, float s);
+image rotate_crop_image(image im, float rad, float s, int w, int h, float dx, float dy, float aspect);
+image random_crop_image(image im, int w, int h);
+image random_augment_image(image im, float angle, float aspect, int low, int high, int w, int h);
+augment_args random_augment_args(image im, float angle, float aspect, int low, int high, int w, int h);
+void letterbox_image_into(image im, int w, int h, image boxed);
+image resize_max(image im, int max);
+void translate_image(image m, float s);
+void embed_image(image source, image dest, int dx, int dy);
+void place_image(image im, int w, int h, int dx, int dy, image canvas);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 void saturate_image(image im, float sat);
 void exposure_image(image im, float sat);
 void distort_image(image im, float hue, float sat, float val);
 void saturate_exposure_image(image im, float sat, float exposure);
+<<<<<<< HEAD
 void hsv_to_rgb(image im);
 //LIB_API void rgbgr_image(image im);
 void constrain_image(image im);
@@ -62,21 +98,33 @@ int best_3d_shift_r(image a, image b, int min, int max);
 
 image grayscale_image(image im);
 image threshold_image(image im, float thresh);
+=======
+void rgb_to_hsv(image im);
+void hsv_to_rgb(image im);
+void yuv_to_rgb(image im);
+void rgb_to_yuv(image im);
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 image collapse_image_layers(image source, int border);
 image collapse_images_horz(image *ims, int n);
 image collapse_images_vert(image *ims, int n);
 
+<<<<<<< HEAD
 void show_image(image p, const char *name);
 void show_image_normalized(image im, const char *name);
 void save_image_png(image im, const char *name);
 void save_image(image p, const char *name);
+=======
+void show_image_normalized(image im, const char *name);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 void show_images(image *ims, int n, char *window);
 void show_image_layers(image p, char *name);
 void show_image_collapsed(image p, char *name);
 
 void print_image(image m);
 
+<<<<<<< HEAD
 //LIB_API image make_image(int w, int h, int c);
 image make_random_image(int w, int h, int c);
 image make_empty_image(int w, int h, int c);
@@ -100,8 +148,19 @@ image get_image_layer(image m, int l);
 
 //LIB_API void free_image(image m);
 void test_resize(char *filename);
+=======
+image make_empty_image(int w, int h, int c);
+void copy_image_into(image src, image dest);
+
+image get_image_layer(image m, int l);
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #ifdef __cplusplus
 }
 #endif
 
 #endif
+<<<<<<< HEAD
+=======
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

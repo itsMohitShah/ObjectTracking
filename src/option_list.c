@@ -3,7 +3,10 @@
 #include <string.h>
 #include "option_list.h"
 #include "utils.h"
+<<<<<<< HEAD
 #include "data.h"
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 list *read_data_cfg(char *filename)
 {
@@ -13,7 +16,11 @@ list *read_data_cfg(char *filename)
     int nu = 0;
     list *options = make_list();
     while((line=fgetl(file)) != 0){
+<<<<<<< HEAD
         ++nu;
+=======
+        ++ nu;
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         strip(line);
         switch(line[0]){
             case '\0':
@@ -35,6 +42,7 @@ list *read_data_cfg(char *filename)
 
 metadata get_metadata(char *file)
 {
+<<<<<<< HEAD
     metadata m = { 0 };
     list *options = read_data_cfg(file);
 
@@ -44,13 +52,26 @@ metadata get_metadata(char *file)
         fprintf(stderr, "No names or labels found\n");
     }
     else {
+=======
+    metadata m = {0};
+    list *options = read_data_cfg(file);
+
+    char *name_list = option_find_str(options, "names", 0);
+    if(!name_list) name_list = option_find_str(options, "labels", 0);
+    if(!name_list) {
+        fprintf(stderr, "No names or labels found\n");
+    } else {
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         m.names = get_labels(name_list);
     }
     m.classes = option_find_int(options, "classes", 2);
     free_list(options);
+<<<<<<< HEAD
     if(name_list) {
         printf("Loaded - names_list: %s, classes = %d \n", name_list, m.classes);
     }
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     return m;
 }
 
@@ -74,7 +95,11 @@ int read_option(char *s, list *options)
 
 void option_insert(list *l, char *key, char *val)
 {
+<<<<<<< HEAD
     kvp* p = (kvp*)xmalloc(sizeof(kvp));
+=======
+    kvp *p = malloc(sizeof(kvp));
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
     p->key = key;
     p->val = val;
     p->used = 0;
@@ -114,6 +139,7 @@ char *option_find_str(list *l, char *key, char *def)
     return def;
 }
 
+<<<<<<< HEAD
 char *option_find_str_quiet(list *l, char *key, char *def)
 {
     char *v = option_find(l, key);
@@ -121,6 +147,8 @@ char *option_find_str_quiet(list *l, char *key, char *def)
     return def;
 }
 
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 int option_find_int(list *l, char *key, int def)
 {
     char *v = option_find(l, key);

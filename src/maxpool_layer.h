@@ -2,12 +2,17 @@
 #define MAXPOOL_LAYER_H
 
 #include "image.h"
+<<<<<<< HEAD
 #include "dark_cuda.h"
+=======
+#include "cuda.h"
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #include "layer.h"
 #include "network.h"
 
 typedef layer maxpool_layer;
 
+<<<<<<< HEAD
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -34,3 +39,18 @@ void backward_local_avgpool_layer_gpu(maxpool_layer layer, network_state state);
 #endif
 
 #endif
+=======
+image get_maxpool_image(maxpool_layer l);
+maxpool_layer make_maxpool_layer(int batch, int h, int w, int c, int size, int stride, int padding);
+void resize_maxpool_layer(maxpool_layer *l, int w, int h);
+void forward_maxpool_layer(const maxpool_layer l, network net);
+void backward_maxpool_layer(const maxpool_layer l, network net);
+
+#ifdef GPU
+void forward_maxpool_layer_gpu(maxpool_layer l, network net);
+void backward_maxpool_layer_gpu(maxpool_layer l, network net);
+#endif
+
+#endif
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c

@@ -1,5 +1,6 @@
 #ifndef BOX_H
 #define BOX_H
+<<<<<<< HEAD
 
 #include "darknet.h"
 
@@ -7,10 +8,15 @@
 //    float x, y, w, h;
 //} box;
 
+=======
+#include "darknet.h"
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 typedef struct{
     float dx, dy, dw, dh;
 } dbox;
 
+<<<<<<< HEAD
 //typedef struct detection {
 //    box bbox;
 //    int classes;
@@ -56,4 +62,11 @@ detection_with_class* get_actual_detections(detection *dets, int dets_num, float
 #ifdef __cplusplus
 }
 #endif
+=======
+float box_rmse(box a, box b);
+dbox diou(box a, box b);
+box decode_box(box b, box anchor);
+box encode_box(box b, box anchor);
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #endif

@@ -1,6 +1,7 @@
 #ifndef IM2COL_H
 #define IM2COL_H
 
+<<<<<<< HEAD
 #include <stddef.h>
 #include <stdint.h>
 #include "darknet.h"
@@ -84,5 +85,17 @@ void convolve_bin_gpu(float *input, float *weights, float *output, int in_w, int
 #endif
 #ifdef __cplusplus
 }
+=======
+void im2col_cpu(float* data_im,
+        int channels, int height, int width,
+        int ksize, int stride, int pad, float* data_col);
+
+#ifdef GPU
+
+void im2col_gpu(float *im,
+         int channels, int height, int width,
+         int ksize, int stride, int pad,float *data_col);
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #endif
 #endif

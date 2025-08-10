@@ -1,13 +1,17 @@
 #ifndef COL2IM_H
 #define COL2IM_H
 
+<<<<<<< HEAD
 #ifdef __cplusplus
 extern "C" {
 #endif
+=======
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 void col2im_cpu(float* data_col,
         int channels, int height, int width,
         int ksize, int stride, int pad, float* data_im);
 
+<<<<<<< HEAD
 void col2im_cpu_ext(const float* data_col, const int channels,
     const int height, const int width, const int kernel_h, const int kernel_w,
     const int pad_h, const int pad_w,
@@ -29,5 +33,11 @@ void col2im_gpu_ext(const float* data_col, const int channels,
 #endif
 #ifdef __cplusplus
 }
+=======
+#ifdef GPU
+void col2im_gpu(float *data_col,
+        int channels, int height, int width,
+        int ksize, int stride, int pad, float *data_im);
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 #endif
 #endif

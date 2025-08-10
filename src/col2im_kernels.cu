@@ -1,9 +1,20 @@
+<<<<<<< HEAD
 #include <cuda_runtime.h>
 #include <curand.h>
 #include <cublas_v2.h>
 
 #include "col2im.h"
 #include "dark_cuda.h"
+=======
+#include "cuda_runtime.h"
+#include "curand.h"
+#include "cublas_v2.h"
+
+extern "C" {
+#include "col2im.h"
+#include "cuda.h"
+}
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
 
 // src: https://github.com/BVLC/caffe/blob/master/src/caffe/util/im2col.cu
 // You may also want to read: https://github.com/BVLC/caffe/blob/master/LICENSE
@@ -39,7 +50,11 @@ __global__ void col2im_gpu_kernel(const int n, const float* data_col,
     }
 }
 
+<<<<<<< HEAD
 void col2im_ongpu(float *data_col,
+=======
+void col2im_gpu(float *data_col,
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
         int channels, int height, int width,
         int ksize, int stride, int pad, float *data_im){
     // We are going to launch channels * height_col * width_col kernels, each
@@ -48,6 +63,7 @@ void col2im_ongpu(float *data_col,
     int width_col = (width + 2 * pad - ksize) / stride + 1;
     int num_kernels = channels * height * width;
     col2im_gpu_kernel<<<(num_kernels+BLOCK-1)/BLOCK,
+<<<<<<< HEAD
         BLOCK, 0, get_cuda_stream() >>>(
                 num_kernels, data_col, height, width, ksize, pad,
                 stride, height_col,
@@ -134,3 +150,11 @@ void col2im_gpu_ext(const float* data_col, const int channels,
 
     CHECK_CUDA(cudaPeekAtLastError());
 }
+=======
+        BLOCK>>>(
+                num_kernels, data_col, height, width, ksize, pad,
+                stride, height_col,
+                width_col, data_im);
+}
+
+>>>>>>> 869fe66efab52ea31b56f577025fb52b0064622c
