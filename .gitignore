@@ -201,6 +201,33 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+*.o
+*.dSYM
+*.csv
+*.out
+*.png
+*.jpg
+*.pyc
+old/
+mnist/
+data/
+caffe/
+grasp/
+images/
+opencv/
+convnet/
+decaf/
+submission/
+cfg/
+darknet
+.fuse*
+
+# OS Generated #
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+*.swp
 
 *.zip
 *.pdf
